@@ -9,8 +9,9 @@ module AOK
       new(File.read(filename), out)
     end
 
-    def initialize(text, out)
-      @product = parse_to_hash(text)
+    def initialize(text, processor)
+      @product   = process(text)
+      @processor = processor
     end
 
     def [](key)
@@ -23,10 +24,10 @@ module AOK
 
     private
 
-    def parse_to_hash(text)
+    def process(text)
       csv = CSV.parse(input_file, headers: true, row_sep: :auto)
       csv.map do |row| # 1 row = 1 product
-        AOK::ProductProcess.parse(row)
+        @processor.call(row)
       end
     end
   end
