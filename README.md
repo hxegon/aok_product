@@ -1,3 +1,6 @@
+## Documentation
+Bug me if I haven't linked this yet, but I have to finish writing the yard doc comments.
+
 ## Format Design
 ### Taxons
 - Header: taxons  
