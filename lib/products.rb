@@ -95,12 +95,15 @@ class TransformerSet
     call(row)
   end
 
-  # add a new transformer. Takes a symbol and a blocko
+  # Add a new transformer. Takes a symbol and a blocko
+  # @note if you add a transformer with a name that already exists, the new one
+    # replaces it
   def add(name, &block)
     assert name.is_a? Symbol
     @transformers.merge name: block
   end
 
+  # remove a transformer by name
   def remove(name)
     assert name.is_a? Symbol
     @transformers.delete(name)
