@@ -1,78 +1,125 @@
+# require 'kiba' # Either do or don't use kiba bruh
 require 'csv'
 
 # Operates like a hash
 module AOK
-  class Products
-    attr_reader :products
+  module Products
+    class Source
+      attr_reader :products
 
-    def self.from_file(filename, out)
-      new(File.read(filename), out)
+      def self.from_file(filename, out)
+        new(File.read(filename), out)
+      end
+
+      def initialize(text, processors = self.default_processors)
+        @products = CSV.parse(input_file, headers: true, row_sep: :auto)
+      end
+
+      def each(&block)
+        @products.each { |p| yield p }
+      end
     end
 
-    def initialize(text, processor)
-      @product   = process(text)
-      @processor = processor
-    end
+    class Transform
+      # Needs to be able to turn specific transformers on and off
+      def new(processors = default_processors)
+        @processors = default_processors
+      end
 
-    def [](key)
-      @products[key]
-    end
+      def default_processors
+        # It's not AOK::Product::Source's responsibility to enable transformer extensibility. *POW* TransformerSet *BANG*
+        TransformerSet.new.generate do |t|
+          g.add(:taxons) do |row|
+          end
 
-    def to_hash
-      @products
-    end
+          g.add(:images) do |row|
+          end
 
-    private
+          g.add(:attributes) do |row|
+          end
 
-    def process(text)
-      csv = CSV.parse(input_file, headers: true, row_sep: :auto)
-      csv.map do |row| # 1 row = 1 product
-        @processor.call(row)
+          g.add(:brand) do |row|
+          end
+
+          g.add(:price) do |row|
+          end
+
+          g.add(:cost) do |row|
+          end
+
+          g.add(:name) do |row|
+          end
+
+          g.add(:description) do |row|
+          end
+
+          g.add(:sku) do |row|
+          end
+
+          g.add(:upc) do |row|
+          end
+        end
+
+        def process(row)
+          @processor.call(row)
+        end
       end
     end
   end
 end
 
-module AOK
-  class ProductProcessor
-    # Applies a list of processor lambdas to the input row, and merges the results
-    # @see default_processors
-    # @note This could be modified to take extra processors, or a custom list.
-    # @note If processors produce output with conflicting keys, this will silently fail :(
-    def self.process(row)
-      # This could be parallelized if the need arises
-      default_processors.map { |processor| processor.call(row) }
-        .reduce({}, &:merge)
-    end
+# RESPONSIBILITY: Enable construction, extension and manipulation of transformer sets
+# INTERFACE: Intended to be called like a proc, or as a kiba transformer with #process
+# EXPECTATIONS: Transformers should return the whole row, not just the part they changed
+  # There are no guarentees about what order the transformers will be run in.
+  # transformers :: a -> a
+class TransformerSet
+  attr_reader :transformers
 
-    # An array of Lambdas that have a signature of Hash -> Hash
-    # Should return just the processed pairs, not the whole input Hash
-    def default_processors
-      # This is a lazy way of being able to handle processors as a list of λs
-      # TODO: Find a better way to handle default processors
-      [
-        # BOOKMARK: Fill in these processors
-        # Taxons
-        ->(row) {},
-        # Images
-        ->(row) {},
-        # Attributes
-        ->(row) {},
-        # Brand
-        ->(row) {},
-        # Price
-        ->(row) {},
-        # Cost
-        ->(row) {},
-        # Name
-        ->(row) {},
-        # Description
-        ->(row) {},
-        # SKU
-        ->(row) {},
-        # UPC
-        ->(row) {}
-      ]
-    end
+  def new
+    @transformers = []
+  end
+
+  # reduces row with transformers
+  def call(row)
+    blocks.reduce(row) { |row_acc, t| t.call[row_acc] }
+  end
+
+  # returns a proc that calls self.call
+  def to_proc
+    ->(row) { self.call(row) }
+  end
+
+  # alias for #call
+  def process(row)
+    call(row)
+  end
+
+  # add a new transformer. Takes a symbol and a blocko
+  # TODO: Decide what happens when there is a symbol collision. #merge?
+  def add(name, &block)
+    assert name.is_a? Symbol
+    @transformers << { name: name, block: block }
+  end
+
+  # def remove # remove a transformer by name
+
+  def blocks
+    @transformers.map { |t_hash| t_hash[:block] }
+  end
+
+  # alias for #transformers
+  def to_a
+    @transformers
+  end
+
+  def to_array
+    @transformers
+  end
+
+  # Enable block construction syntax. returns self.
+  def generate(&block)
+    yield self
+    self
   end
 end
