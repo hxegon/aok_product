@@ -87,7 +87,7 @@ class TransformerSet
 
   # returns a proc that calls self.call
   def to_proc
-    ->(row) { self.call(row) }
+    proc { |row| self.call(row) }
   end
 
   # alias for #call
