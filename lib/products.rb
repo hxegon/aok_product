@@ -71,13 +71,13 @@ end
 # RESPONSIBILITY: Enable construction, extension and manipulation of transformer sets
 # INTERFACE: Intended to be called like a proc, or as a kiba transformer with #process
 # EXPECTATIONS: Transformers should return the whole row, not just the part they changed
-  # There are no guarentees about what order the transformers will be run in.
-  # transformers :: a -> a
+# There are no guarentees about what order the transformers will be run in.
+# transformers :: a -> a
 class TransformerSet
   attr_reader :transformers
 
   def new
-    @transformers = []
+    @transformers = {}
   end
 
   # reduces row with transformers
@@ -96,24 +96,22 @@ class TransformerSet
   end
 
   # add a new transformer. Takes a symbol and a blocko
-  # TODO: Decide what happens when there is a symbol collision. #merge?
   def add(name, &block)
     assert name.is_a? Symbol
-    @transformers << { name: name, block: block }
+    @transformers.merge name: block
   end
 
-  # def remove # remove a transformer by name
+  def remove(name)
+    assert name.is_a? Symbol
+    @transformers.delete(name)
+  end
 
   def blocks
-    @transformers.map { |t_hash| t_hash[:block] }
+    @transformers.values
   end
 
   # alias for #transformers
-  def to_a
-    @transformers
-  end
-
-  def to_array
+  def to_hash
     @transformers
   end
 
