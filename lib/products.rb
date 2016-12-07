@@ -59,10 +59,10 @@ module AOK
           g.add(:upc) do |row|
           end
         end
+      end
 
-        def process(row)
-          @processor.call(row)
-        end
+      def process(row)
+        @processor.call(row)
       end
     end
   end
