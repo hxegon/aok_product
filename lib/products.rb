@@ -28,6 +28,10 @@ module AOK
         @processors = processors
       end
 
+      def [](name)
+        @processors[name.to_sym]
+      end
+
       def default_processors
         # It's not AOK::Product::Source's responsibility to enable transformer extensibility. *POW* TransformerSet *BANG*
         TransformerSet.new.generate do |t|
