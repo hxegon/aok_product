@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '~> 2.2.5'
+
 gem 'activesupport', require: false
 gem 'thor'
 gem 'kiba'
