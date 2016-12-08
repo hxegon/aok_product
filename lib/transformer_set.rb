@@ -29,8 +29,7 @@ class TransformerSet
   # @note if you add a transformer with a name that already exists, the new one
     # replaces it
   def add(name, &block)
-    assert name.is_a? Symbol
-    @transformers.merge name: block
+    @transformers.merge(name.to_sym => block)
   end
 
   # remove a transformer by name
