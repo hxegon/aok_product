@@ -52,4 +52,3 @@ class ImageConverter
     lookup[image_key.match(/image_(\w+)_\d+/).captures[0]]
   end
 end
-

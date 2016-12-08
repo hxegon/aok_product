@@ -15,7 +15,7 @@ class TransformerSet
 
   # @return a proc that calls self.call
   def to_proc
-    proc { |row| self.call(row) }
+    proc { |row| call(row) }
   end
 
   # @alias for #call
@@ -50,9 +50,8 @@ class TransformerSet
   end
 
   # Enable block construction syntax. returns self.
-  def generate(&block)
+  def generate
     yield self
     self
   end
 end
-
