@@ -13,11 +13,11 @@ module AOK
         new(File.read(filename), out)
       end
 
-      def initialize(text, processors = self.default_processors)
-        @products = CSV.parse(input_file, headers: true, row_sep: :auto)
+      def initialize(text)
+        @products = CSV.parse(text, headers: true, row_sep: :auto)
       end
 
-      def each(&block)
+      def each
         @products.each { |p| yield p }
       end
     end
@@ -25,40 +25,47 @@ module AOK
     class Transform
       # Needs to be able to turn specific transformers on and off
       def new(processors = default_processors)
-        @processors = default_processors
+        @processors = processors
       end
 
       def default_processors
         # It's not AOK::Product::Source's responsibility to enable transformer extensibility. *POW* TransformerSet *BANG*
         TransformerSet.new.generate do |t|
-          g.add(:taxons) do |row|
+          t.add(:taxons) do |row|
           end
 
-          g.add(:images) do |row|
+          t.add(:images) do |row|
+            # ImageConverter.convert(row)
+            # Should this be completely encapsulated by ImageConverter?
+            images = ImageConverter.find_images(row)
+            images.keys.each do |old_image_field|
+              row.delete(old_image_field)
+            end
+            row['images'] = ImageConverter.call(images)
           end
 
-          g.add(:attributes) do |row|
+          t.add(:attributes) do |row|
           end
 
-          g.add(:brand) do |row|
+          t.add(:brand) do |row|
           end
 
-          g.add(:price) do |row|
+          t.add(:price) do |row|
           end
 
-          g.add(:cost) do |row|
+          t.add(:cost) do |row|
           end
 
-          g.add(:name) do |row|
+          t.add(:name) do |row|
           end
 
-          g.add(:description) do |row|
+          t.add(:description) do |row|
           end
 
-          g.add(:sku) do |row|
+          t.add(:sku) do |row|
           end
 
-          g.add(:upc) do |row|
+          t.add(:upc) do |row|
           end
         end
       end
