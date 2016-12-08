@@ -35,13 +35,7 @@ module AOK
           end
 
           t.add(:images) do |row|
-            # ImageConverter.convert(row)
-            # Should this be completely encapsulated by ImageConverter?
-            images = ImageConverter.find_images(row)
-            images.keys.each do |old_image_field|
-              row.delete(old_image_field)
-            end
-            row['images'] = ImageConverter.call(images)
+            ImageConverter.convert(row) # TODO: RED
           end
 
           t.add(:attributes) do |row|

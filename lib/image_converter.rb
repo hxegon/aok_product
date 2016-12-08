@@ -25,6 +25,13 @@ class ImageConverter
     Hash[hash.select { |(k, _)| k =~ /\Aimage_.+/ }]
   end
 
+  def self.convert(row)
+    find_images(row).keys.each do |old_image_field|
+      row.delete(old_image_field)
+    end
+    row['images'] = call(images)
+  end
+
   private
 
   def initialize(image_hash)
