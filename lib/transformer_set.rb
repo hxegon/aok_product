@@ -4,13 +4,13 @@
 class TransformerSet
   attr_reader :transformers
 
-  def new
+  def initialize
     @transformers = {}
   end
 
   # Reduces row with transformers
   def call(row)
-    blocks.reduce(row) { |row_acc, t| t.call[row_acc] }
+    blocks.reduce(row) { |row_acc, t| t.call(row_acc) }
   end
 
   # @return a proc that calls self.call
@@ -29,13 +29,13 @@ class TransformerSet
   # @note if you add a transformer with a name that already exists, the new one
     # replaces it
   def add(name, &block)
-    @transformers.merge(name.to_sym => block)
+    @transformers[name.to_sym] = block
+    self
   end
 
   # remove a transformer by name
   def remove(name)
-    assert name.is_a? Symbol
-    @transformers.delete(name)
+    @transformers.delete(name.to_sym)
   end
 
   # return [Lambdas] returns a list of block type valuse. @transformers.values
@@ -43,12 +43,16 @@ class TransformerSet
     @transformers.values
   end
 
+  def [](key)
+    @transformers[key]
+  end
+
   # alias for #transformers
   def to_hash
     @transformers
   end
 
-  # Enable block construction syntax. returns self.
+  # Enable block construction syntax. returns self. Basically #tap.
   def generate
     yield self
     self
