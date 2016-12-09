@@ -1,62 +1,42 @@
-require_relative 'index_groupable'
+# refines a method, Enumerable#map_with_index
+# @see Enumerable#each_with_index
+module MapWithIndex
+  refine Array do # Would refine Enumerable, but you can only refine classes, not modules.
+    def map_with_index
+      index = 0 # acts as an index, works like a counter
+      map do |element|
+        (yield element, index).tap { |_| index += 1 }
+      end
+    end
+  end
+end
+
 # Reformat image fields from jensen csv hashes to strip flattening artifacts.
 # @see .call
+# @note nothing in this class does URL validation.
 class ImageConverter
-  include IndexGroupable
+  using MapWithIndex
 
-  # Makes new instance, calls #convert.
-  # @example
-  #   image = { 'image_reference_1' => 'http://www.dot.com',
-  #              'image_name_1'      => 'homepage' }
-  #   ImageConverter.call(image)
-  #   # => image = {
-  #     'url' => 'http://www.dot.com',
-  #     'title' => 'homepage'
-  #   }
-  # @param image [Hash]
+  # @param urls [String]
   # @return [Hash]
-  def self.call(image)
-    new(image).send(:convert)
-  end
-
-  # Finds hash fields with a key starting with 'images_'
-  # @param hash [Hash]
-  # @return [Hash]
-  def self.find_images(hash)
-    Hash[hash.select { |(k, _)| k =~ /\Aimage_.+/ }]
-  end
-
-  def self.convert(row)
-    find_images(row).keys.each do |old_image_field|
-      row.delete(old_image_field)
+  def self.urls_to_image_hash(urls)
+    urls.map_with_index do |e, ind|
+      { 'title' => "Image #{ind + 1}", 'url' => e }
     end
-    row['images'] = call(images)
   end
 
-  private
-
-  def initialize(image_hash)
-    @images = image_hash
+  # alias to .convert
+  # @see convert
+  def self.call(row)
+    convert(row)
   end
 
-  def convert
-    rename_keys!
-    filter_blanks!
-    @images
+  def self.to_proc
+    proc { |row| self.class.convert(row) }
   end
 
-  def filter_blanks!
-    is_blank = ->(o) { o.nil? || o.empty? }
-    @images.reject! { |img| is_blank[img['title']] || is_blank[img['url']] }
-  end
-
-  def rename_keys!
-    @images = group_by_index(@images)
-    @images.map! { |g| Hash[g.map { |k, v| [rename_key(k), v] }] }
-  end
-
-  def rename_key(image_key)
-    lookup = { 'reference' => 'url', 'name' => 'title' }
-    lookup[image_key.match(/image_(\w+)_\d+/).captures[0]]
+  # Converts a row
+  def self.convert(row)
+    row.merge('images' => urls_to_image_hash(row['images'].split('&&')))
   end
 end
