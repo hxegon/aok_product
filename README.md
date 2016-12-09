@@ -23,7 +23,7 @@ This should speed up the task of adding taxons significantly.
 - example cell: 'http://imgur.com/bbqrofllmao&&http://imagebucket.com/foobiebelch?=barbazlol'  
 - example output:   
 ```ruby
-[{ url: 'http://imgur.com/bbqrofllmao', title: 'Image 1' }, { url: 'http://imagebucket.com/foobiebelch?=barbazlol', title: 'Image 2'}]
+{ 'images' => [{ url: 'http://imgur.com/bbqrofllmao', title: 'Image 1' }, { url: 'http://imagebucket.com/foobiebelch?=barbazlol', title: 'Image 2'}] }
 ```
 - '&&' is the image url separator  
 - The images are just titled according to their order. First image is 'Image 1', second is 'Image 2', and so on...
