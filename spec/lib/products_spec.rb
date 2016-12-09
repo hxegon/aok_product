@@ -1,7 +1,6 @@
 require_relative '../../lib/products'
 
 Source    = AOK::Products::Source
-Transform = AOK::Products::Transform
 
 RSpec.describe Source do
   context 'DEFAULT_TRANSFORMER' do

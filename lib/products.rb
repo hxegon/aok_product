@@ -1,6 +1,6 @@
 require 'csv'
-require_relative '../transformer_set'
-require_relative '../image_converter'
+require_relative 'transformer_set'
+require_relative 'image_converter'
 
 # Operates like a hash
 module AOK
