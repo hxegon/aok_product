@@ -1,3 +1,4 @@
+require_relative 'index_groupable'
 # Reformat image fields from jensen csv hashes to strip flattening artifacts.
 # @see .call
 class ImageConverter
