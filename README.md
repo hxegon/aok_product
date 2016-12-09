@@ -1,7 +1,13 @@
 ## Documentation
+TODO link this
 Bug me if I haven't linked this yet, but I have to finish writing the yard doc comments.
 
 ## Format Design
+TODO link to wombat doc site, product page
+
+### File Names
+TODO
+
 ### Taxons
 - Header: taxons  
 - example cell: 'toplevelcat//subcat&&othertoplevelcat//othersubcat'  
@@ -29,8 +35,9 @@ This should speed up the task of adding taxons significantly.
 - The images are just titled according to their order. First image is 'Image 1', second is 'Image 2', and so on...
 
 ### Attributes
-Needs further discussion. Best idea so far:
 - Header: @<attribute-name> (i.e. '@barsize')
+- *THE HEADER IS CASE SENSITIVE*
+- Cell: '28"'
 
 ### Brand
 - Header: Brand
