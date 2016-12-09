@@ -1,6 +1,5 @@
 require 'csv'
 require_relative '../transformer_set'
-require_relative '../index_groupable'
 require_relative '../image_converter'
 
 # Operates like a hash
