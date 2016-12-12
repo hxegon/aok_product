@@ -43,6 +43,12 @@ class Extractor
   end
 
   def extract(row)
-    @steps.map { |s| s[:block].call(row) }
+    @steps.map do |s|
+      begin
+        s[:block].call(row)
+      rescue => e
+        raise e, "Failed to execute extractor step #{name}"
+      end
+    end
   end
 end
