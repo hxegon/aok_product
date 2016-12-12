@@ -46,7 +46,7 @@ class Extractor
     @steps.map do |s|
       begin
         s[:block].call(row)
-      rescue => e
+      rescue StandardError => e
         raise e, "Failed to execute extractor step #{name}"
       end
     end
