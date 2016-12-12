@@ -17,6 +17,10 @@ class Extractor
     steps.each { |s| add(name: s[:name], &s[:block]) }
   end
 
+  def steps
+    @steps
+  end
+
   # access name or to_proc with hash like symbol syntax
   def [](key)
     case key.to_sym
@@ -30,27 +34,32 @@ class Extractor
   end
 
   def to_proc
-    proc { |row| extract(row) }
+    proc { |value| extract(value) }
   end
 
-  def add(name:, &block)
+  def add(name: name, &block)
     if [:name, :block].include? name.to_sym
       raise ArgumentError, "Name argument can't be 'name', :name, 'block', or :block"
     end
 
     @steps ||= {}
-    @steps.merge name => block
+    @steps.merge! name => block
+    self
   end
 
-  def remove(name)
+  def delete(name)
     @steps ||= {}
-    @steps.delete(name)
+    unless (deleted_block = @steps.delete(name))
+      nil
+    else
+    { name: name, block: deleted_block }
+    end
   end
 
-  def extract(row)
-    @steps.map do |s|
+  def extract(value)
+    @steps.values.map do |s|
       begin
-        s[:block].call(row)
+        s.call(value)
       rescue StandardError => e
         raise e, "Failed to execute extractor step #{name}"
       end
