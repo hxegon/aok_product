@@ -33,10 +33,16 @@ class Extractor
     end
   end
 
-  def to_proc
+  def to_proc # TODO: TEST IF NESTING EXTRACTORS WORK.
+    # Because these are pure functions, might nested extractors work better by
+    # just #to_hashing and merging with the steps?
+    # This would cause any name conflicts to merge, which means the caller would
+    # have to know of every name in the added extractor, so no.
     proc { |value| extract(value) }
   end
 
+  # Add a step. Name collisions throw out the old one.
+  # @return self
   def add(name: name, &block)
     if [:name, :block].include? name.to_sym
       raise ArgumentError, "Name argument can't be 'name', :name, 'block', or :block"
