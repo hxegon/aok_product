@@ -52,7 +52,7 @@ class Extractor
     unless (deleted_block = @steps.delete(name))
       nil
     else
-    { name: name, block: deleted_block }
+      { name: name, block: deleted_block }
     end
   end
 
