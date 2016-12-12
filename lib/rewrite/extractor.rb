@@ -1,10 +1,11 @@
 # TODO: examples
 
+# Manages and executes steps
 class Extractor
   attr_reader :name
 
-  # Needs a name, and a list of 'steps' is anything that responds to [:name]
-  # and [:block]
+  # Takes a name, and a list of 'steps' (anything that responds to [:name] and
+  # [:block], including an Extractor instance.)
   # @note Extractor steps don't have a guaranteed execution order, which
     # shouldn't matter if you wrote your steps as pure functions.
   def initialize(name, *steps)
