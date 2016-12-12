@@ -17,14 +17,14 @@ class Extractor
   end
 
   # access name or to_proc with hash like symbol syntax
-  def [](name_or_block)
-    case name_or_block.to_sym
+  def [](key)
+    case key.to_sym
     when :name
       name
     when :block
       to_proc
     else
-      nil
+      @steps[key]
     end
   end
 
@@ -33,6 +33,10 @@ class Extractor
   end
 
   def add(name:, &block)
+    if [:name, :block].include? name.to_sym
+      raise ArgumentError, "Name argument can't be 'name', :name, 'block', or :block"
+    end
+
     @steps ||= {}
     @steps.merge name => block
   end
