@@ -12,14 +12,14 @@ module AOKExtractor
         ImageConverter.convert(row)
       end
 
-      e.add(:attributes) do |row|
+      e.add(:properties) do |row|
         row.tap do |r| # wrap []= so we return the entire hash
           r['properties'] =
             r.select { |(header, _)| header[0] == '@' } # find cells with attribute headers
             .map { |k, v| [k.remove('@'), v] }          # remove attr identifier char: '@'
             .map { |hash_arr| Hash[hash_arr] }          # convert Hash map output (Array of Arrays) to Array of Hashes
             .reduce(&:merge)                            # merge Array of Hashes into single hash
-        end 
+        end
       end
 
       e.add(:brand) do |row|
