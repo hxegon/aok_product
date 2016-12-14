@@ -27,6 +27,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     i18n (0.7.0)
+    kiba (1.0.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -77,11 +78,15 @@ DEPENDENCIES
   activesupport
   awesome_print
   guard-rspec
+  kiba
   pry
   pry-doc
   rspec
   thor
   yard
+
+RUBY VERSION
+   ruby 2.2.6p396
 
 BUNDLED WITH
    1.13.6
