@@ -1,4 +1,4 @@
-require_relative '../image_converter'
+require_relative 'image_converter'
 require_relative 'extractor'
 
 module AOKExtractor

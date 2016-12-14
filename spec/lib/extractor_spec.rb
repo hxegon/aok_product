@@ -1,4 +1,4 @@
-require_relative '../../../lib/rewrite/extractor'
+require_relative '../../lib/rewrite/extractor'
 
 RSpec.describe Extractor do
   before(:each) do
