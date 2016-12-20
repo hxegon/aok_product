@@ -18,6 +18,7 @@ GEM
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
     diff-lcs (1.2.5)
+    dotenv (2.1.1)
     ffi (1.9.14)
     formatador (0.2.5)
     guard (2.14.0)
@@ -87,6 +88,7 @@ DEPENDENCIES
   activesupport
   awesome_print
   aws-sdk
+  dotenv
   guard-rspec
   kiba
   pry
