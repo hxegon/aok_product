@@ -1,5 +1,6 @@
 require 'aws-sdk'
 require 'dotenv'
+require 'json'
 
 Dotenv.load
 
@@ -53,5 +54,37 @@ class F2S3
     end
 
     Pathname.dirname(@last_bucket_path) + Pathname.basename(file_target)
+  end
+end
+
+# Kiba wrapper for any client implementing :upload_file (see: F2S3)
+class S3Destination
+  attr_accessor :rows
+
+  def initialize(client)
+    unless client.respond_to?(:upload_file)
+      raise ArgumentError, "client needs to respond to :upload_file."
+    end
+
+    @rows = []
+    @client = client
+  end
+
+  # Accumulates rows together
+  # @see #close
+  def write(row)
+    rows << row
+  end
+
+  # Converts accumulated rows to json, turns into a tmp file, passes it to
+  # @client.upload_file
+  # @return Whatever @client.upload_file returns
+  def close
+    # convert rows to json
+    tmp = Tempfile.new('S3Destination_tmpfile')
+    tmp.write(rows.to_json)
+    tmp.close # close(ing) the file commits the write
+
+    @client.upload_file(tmp.path).tap { |_| tmp.unlink }
   end
 end
