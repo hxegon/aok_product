@@ -1,7 +1,8 @@
 require 'aws-sdk'
-require 'dotenv'
 require 'json'
 
+# TODO: this should not be in this file
+require 'dotenv'
 Dotenv.load
 
 # (expicit/implicit) TODO: The way this class is written doesn't make the difference between:
@@ -12,12 +13,25 @@ Dotenv.load
 # (examples) TODO: Provide Example docs with and w/o bucket_name inference.
 #   Should be enough to mitigate the (explicit/implicit) TODO
 
+# (kiba) TODO: Implement any necessary methods for kiba destinations
+
 # BOOKMARK TODO: figure out what env vars need to be present. Document them.
 # should be in a dotenv in a project using s3
 # The .env file, with the auth and required stuff, is on my laptop 8()
 
-# Wraps the AWS gem S3 interface. Can infer the bucket path from either the last
-# bucket path you used, or what you specify (either with bucket_path= or passed in with .new)
+# A module that wraps the AWS gem into a focused interface for uploading files
+# to s3. Can infer the bucket path from either the last bucket path you used, or
+# what you specify (either with bucket_path= or passed in with .new).
+# @example Explicit usage pattern:
+#   bucket_name     = 'bucketname'
+#   bucket_path     = ''
+#   local_file_path = ''
+#   F2S3.upload_file(local_file_path, bucket_path, bucket_name)
+# @example Implicit usage pattern:
+#   bucket_name = ''
+#   bucket_path = ''
+#   client = F2S3.new(bucket_name, bucket_path) # you can also set bucket_path with #bucket_path=
+#   client.upload_file('')
 class F2S3
   # def self.new_from_env
 
@@ -29,10 +43,11 @@ class F2S3
 
   # def self.upload_file(bucket_name # For a simpler interface
 
-  # UNSAFE. UNTESTED. 
+  # UNSAFE. UNTESTED. UNTITLED. UNMASTERED.
+  # @return Bool returns true if file upload successful, false if not
   def upload_file(local_file_path, bucket_path=nil)
     @bucket.object(make_bucket_path(bucket_path, local_file_path))
-      .upload_file(local_file_path)
+      .upload_file(local_file_path) # TODO: Am I 100% sure this is a file path and not an IO object?
   end
 
   # set the bucket path used to infer bucket paths
@@ -66,7 +81,7 @@ class S3Destination
       raise ArgumentError, "client needs to respond to :upload_file."
     end
 
-    @rows = []
+    @rows   = []
     @client = client
   end
 
@@ -85,6 +100,7 @@ class S3Destination
     tmp.write(rows.to_json)
     tmp.close # close(ing) the file commits the write
 
+    #                            # unlink, but return upload_file result
     @client.upload_file(tmp.path).tap { |_| tmp.unlink }
   end
 end

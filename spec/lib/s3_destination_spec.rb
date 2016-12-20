@@ -1,6 +1,19 @@
 require_relative '../../lib/s3_destination'
 require 'json'
 
+RSpec.describe F2S3 do
+  context '#make_bucket_path' do
+    context 'explicitly' do
+      it 'contstructs bucket_paths correctly' do
+      end
+    end
+
+    context 'implicitly' do
+      it 'contstructs bucket_paths correctly'
+    end
+  end
+end
+
 RSpec.describe S3Destination do
   context '#write' do
     let(:s3d) do
