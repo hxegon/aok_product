@@ -5,6 +5,8 @@ ruby '~> 2.2.5'
 gem 'activesupport', require: false
 gem 'thor'
 gem 'kiba'
+gem 'aws-sdk'
+gem 'dotenv'
 
 group :development, :test do
   gem 'awesome_print', require: 'ap'
