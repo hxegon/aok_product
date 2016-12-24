@@ -43,7 +43,7 @@ class Extractor
 
   # Add a step. Name collisions throw out the old one.
   # @return self
-  def add(name: name, &block)
+  def add(name:, &block)
     if [:name, :block].include? name.to_sym
       raise ArgumentError, "Name argument can't be 'name', :name, 'block', or :block"
     end
