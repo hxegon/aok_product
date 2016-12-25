@@ -22,10 +22,10 @@ Dotenv.load
 class F2S3
   # def self.new_from_env
 
-  def initialize(bucket_name, bucket_path=nil)
+  def initialize(bucket:, path:nil)
     @s3               = Aws::S3::Resource.new
-    @bucket           = @s3.bucket(bucket_name)
-    @last_bucket_path = bucket_path
+    @bucket           = @s3.bucket(bucket)
+    @last_bucket_path = path
     @required_keys = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
   end
 
