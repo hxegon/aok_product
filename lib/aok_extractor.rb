@@ -53,7 +53,7 @@ class AOKExtractor < Extractor
   end
 
   def description(row)
-    { 'description' => row[row.keys.grep(/description/i).first] }
+    { 'description' => row[row.keys.grep(/description/i).first] || '' }
   end
 
   def sku(row)
