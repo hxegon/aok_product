@@ -17,7 +17,7 @@ class Extractor # Flog Score: 29
       :brand,
       :price,
       :cost,
-      :title,
+      :name,
       :description,
       :sku,
       :upc
@@ -58,7 +58,7 @@ class Extractor # Flog Score: 29
     raise NotImplement
   end
 
-  def title
+  def name
     raise NotImplement
   end
 

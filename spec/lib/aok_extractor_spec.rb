@@ -54,11 +54,11 @@ RSpec.describe AOKExtractor do
       end
     end
 
-    context ':title' do
-      it 'returns \'name\' => <title>' do
-        row = { 'title' => 'foo' }
+    context ':name' do
+      it 'returns \'name\' => <name>' do
+        row = { 'name' => 'foo' }
         
-        expect(aok_e.title(row)).to eq({ 'name' => 'foo' })
+        expect(aok_e.name(row)).to eq({ 'name' => 'foo' })
       end
     end
 

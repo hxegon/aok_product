@@ -48,8 +48,8 @@ class AOKExtractor < Extractor
     { 'cost' => 0.00 }
   end
 
-  def title(row)
-    { 'name' => row[row.keys.grep(/title/i).first] }
+  def name(row)
+    { 'name' => row[row.keys.grep(/name/i).first] }
   end
 
   def description(row)
