@@ -35,8 +35,10 @@ class ImageConverter
     proc { |row| self.class.convert(row) }
   end
 
-  # Converts a row
-  def self.convert(row)
-    row.merge('images' => urls_to_image_hash(row['images'].split('&&')))
+  # Converts a row # SHOULDN'T EXIST. Row field finding / extraction logic should be in extractor
+  # THIS IS ALSO DESTRUCTIVE. NEEDS TO BE REWRITTEN
+  def self.convert(raw_images_string)
+    urls_to_image_hash(raw_images_string.split('&&'))
+    # row.merge('images' => urls_to_image_hash(row['images'].split('&&')))
   end
 end

@@ -12,7 +12,8 @@ class AOKExtractor < Extractor
   end
 
   def images(row)
-    ImageConverter.convert(row)
+    raw_images = row[row.keys.grep(/images/i).first]
+    { 'images' => ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg') } # TMP: Give cheeky 404 image if raw_images is nil
   end
 
   def properties(row)
