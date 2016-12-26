@@ -65,6 +65,10 @@ class AOKExtractor < Extractor
     { 'upc' => row[row.keys.grep(/upc\s*(code)?\s*$/i).first] }
   end
 
+  def shipping_category(row)
+    { 'shipping_category' => row[row.keys.grep(/shipping category/i).first] || 'Default' }
+  end
+
   # Not defined, as specified by the readme
   # def options(row)
   # end

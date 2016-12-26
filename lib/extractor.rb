@@ -20,7 +20,8 @@ class Extractor # Flog Score: 29
       :name,
       :description,
       :sku,
-      :upc
+      :upc,
+      :shipping_category
     ]
   end
 
@@ -72,5 +73,9 @@ class Extractor # Flog Score: 29
 
   def upc
     raise NotImplement
+  end
+
+  def shipping_category
+    raise NotImplementedError
   end
 end

@@ -83,6 +83,9 @@ RSpec.describe AOKExtractor do
       end
     end
 
+    context ':shipping_category' do
+    end
+
     # context ':options'
   end
 end
