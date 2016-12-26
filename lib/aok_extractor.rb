@@ -34,7 +34,7 @@ class AOKExtractor < Extractor
     # b) Clear and visible as much as possible
     # I'm going to have this raise NotImplementedError, to force the caller to implement it
     # in a more visible place
-    raise NotImplementedError, "price extraction should be defined (with #add) by the caller :)"
+    { 'price' => Float(row.keys.grep(/price/i).first) }
   end
 
   def cost(row)
@@ -43,7 +43,7 @@ class AOKExtractor < Extractor
     # b) Clear and visible as much as possible
     # I'm going to have this raise NotImplementedError, to force the caller to implement it
     # in a more visible place
-    raise NotImplementedError, "cost extraction should be defined (with #add) by the caller :)"
+    { 'cost' => 0.00 }
   end
 
   def title(row)

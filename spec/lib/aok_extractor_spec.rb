@@ -44,13 +44,13 @@ RSpec.describe AOKExtractor do
 
     context ':price' do
       it 'raises NotImplementedError' do
-        expect { aok_e.price(nil) }.to raise_error(NotImplementedError)
+        # add test here. Now it's implemented.
       end
     end
     
     context ':cost' do
       it 'raises NotImplementedError' do
-        expect { aok_e.cost(nil) }.to raise_error(NotImplementedError)
+        # add test here. Now it's implemented.
       end
     end
 
