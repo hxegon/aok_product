@@ -29,9 +29,9 @@ class Extractor # Flog Score: 29
     proc { |value| extract(value) }
   end
 
-  def extract(value)
+  def extract(row)
     @steps.map do |step_name|
-      send(step_name)
+      send(step_name, row)
     end
   end
 
