@@ -19,6 +19,7 @@ class AOKExtractor < Extractor
   def properties(row)
     { 'properties' =>
       row.select { |(header, _)| header[0] == '@' } # find cells with attribute headers
+        .reject { |_, val| val =~ /\A\s*x?\s*\z/i } # check is only x and or whitespace
         .map { |(k, v)| [k.sub(/@/, ''), v] }       # remove attr identifier char: '@'
         .map { |hash_arr| Hash[*hash_arr] }         # convert Hash map output (Array of Arrays) to Array of Hashes
         .reduce(&:merge) || {}                      # merge Array of Hashes into single hash
