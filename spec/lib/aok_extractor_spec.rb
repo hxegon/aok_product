@@ -31,6 +31,12 @@ RSpec.describe AOKExtractor do
         expect(aok_e.properties(row)['something']).to be_nil
         expect(aok_e.properties(row)['properties']['something']).to be_nil
       end
+
+      it 'leaves out blank or \'X\'d attributes' do
+        row = { '@na_attribute' => '  X', '@blank_attribute' => ' ' }
+        expect(aok_e.properties(row))
+          .to eq({ 'properties' => {} })
+      end
     end
 
     context ':brand' do
