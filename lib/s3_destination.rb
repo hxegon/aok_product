@@ -26,7 +26,7 @@ class F2S3
     @s3               = Aws::S3::Resource.new
     @bucket           = @s3.bucket(bucket)
     @last_bucket_path = path
-    @required_keys = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
+    @required_keys    = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
   end
 
   # def self.upload_file(bucket_name # For a simpler interface
@@ -43,6 +43,10 @@ class F2S3
     @last_bucket_path = bucket_path
   end
 
+  def target_filename=(filename)
+    @target_filename = filename
+  end
+
   # Handles the bucket_path inference plumbing
   def make_bucket_path(bucket_path, local_file_path)
     @last_bucket_path = bucket_path || infer_bucket_path(local_file_path)
@@ -55,8 +59,15 @@ class F2S3
     if @last_bucket_path.nil?
       raise RuntimeError, "No @last_bucket_path to infer bucket path from. Try specifying manually."
     end
+    dir = if @last_bucket_path.split('/').size == 1
+            Pathname.new(@last_bucket_path)
+          else
+            Pathname.new(@last_bucket_path).dirname
+          end
 
-    Pathname.dirname(@last_bucket_path) + Pathname.basename(file_target)
+    target_filename = @target_filename || Pathname.new(file_target).basename 
+
+    (dir + target_filename).to_s
   end
 end
 
