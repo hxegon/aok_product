@@ -53,7 +53,7 @@ RSpec.describe AOKExtractor do
         # add test here. Now it's implemented.
       end
     end
-    
+
     context ':cost' do
       it 'raises NotImplementedError' do
         # add test here. Now it's implemented.
