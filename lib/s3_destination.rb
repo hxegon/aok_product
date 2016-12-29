@@ -59,11 +59,8 @@ class F2S3
     if @last_bucket_path.nil?
       raise RuntimeError, "No @last_bucket_path to infer bucket path from. Try specifying manually."
     end
-    dir = if @last_bucket_path.split('/').size == 1
-            Pathname.new(@last_bucket_path)
-          else
-            Pathname.new(@last_bucket_path).dirname
-          end
+    dir = Pathname.new(@last_bucket_path)
+    dir = dir.dirname if @last_bucket_path.split('/').size == 1
 
     target_filename = @target_filename || Pathname.new(file_target).basename 
 
