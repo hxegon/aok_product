@@ -93,5 +93,23 @@ RSpec.describe AOKExtractor do
     end
 
     # context ':options'
+
+    context ':id' do
+      let(:row) { { 'brand' => 'Foo Co.', 'sku' => 'BARCODE' } }
+      let(:old_id) { aok_e.id(row) }
+
+      # Not really general flowlink id properties, but just our implementation.
+      it 'changes if brand changes' do
+        old_id = old_id # Seems nonsensical, I know. Let statements can be weird.
+        row['brand'] = 'Foo Co. Ltd.'
+        expect(aok_e.id(row)).to_not eq old_id
+      end
+
+      it 'changes if sku changes' do
+        old_id = old_id
+        row['sku'] = 'BAZCODE'
+        expect(aok_e.id(row)).to_not eq old_id
+      end
+    end
   end
 end

@@ -1,7 +1,17 @@
 require_relative 'image_converter'
 require_relative 'extractor'
 
+module HashGrepFirst
+  refine Hash do
+    def grep_first(pattern)
+      self[keys.grep(pattern).first]
+    end
+  end
+end
+
 class AOKExtractor < Extractor
+  using HashGrepFirst
+
   def taxons(row)
     { 'taxons' =>
       row.keys.grep(/taxon/i).map do |k|
@@ -72,4 +82,8 @@ class AOKExtractor < Extractor
   # Not defined, as specified by the readme
   # def options(row)
   # end
+
+  def id(row)
+    { 'id' => row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s }
+  end
 end
