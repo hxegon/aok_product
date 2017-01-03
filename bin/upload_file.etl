@@ -1,0 +1,22 @@
+# vi: ft=ruby
+
+require 'kiba'
+require_relative '../lib/csv_source.rb'
+require_relative '../lib/aok_extractor.rb'
+require_relative '../lib/s3_destination.rb'
+
+CSV_FILES_PATH = 'processing_inbox/*.csv'
+
+Dir[CSV_FILES_PATH].each do |file|
+  source CSVSource, File.read(file)
+end
+
+transform do |row|
+  AOKExtractor.new.extract(row) # Hash -> [Hash]
+    .reduce(&:merge)            # [Hash] -> Hash
+end
+
+client                 = F2S3.new bucket: 'aokproduct', path: 'Test/'
+client.target_filename = 'products.json'
+
+destination S3Destination, client

@@ -10,6 +10,6 @@ class CSVSource
   end
 
   def each
-    @products.each { |p| yield p }
+    @products.each { |p| yield p.to_hash }
   end
 end
