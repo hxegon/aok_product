@@ -97,7 +97,7 @@ class S3Destination
   # @return Whatever @client.upload_file returns
   def close
     # convert rows to json
-    tmp = Tempfile.new('S3Destination_tmpfile')
+    tmp = Tempfile.new('S3Destination')
     tmp.write(rows.to_json)
     tmp.close # close(ing) the file commits the write
 
