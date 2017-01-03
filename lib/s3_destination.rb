@@ -27,7 +27,7 @@ end
 #   client.upload_file('/tmp/farquad.json')
 class F2S3
   # def self.new_from_env
-  attr_accessor :target_filename, :bucket_folder, :bucket_filename
+  attr_accessor :bucket_folder, :bucket_filename
   
   # @param env [Hash] ENV by default, see @required_keys.
   def initialize(bucket:, env:ENV)
@@ -40,15 +40,14 @@ class F2S3
 
   # UNSAFE. UNTESTED. UNTITLED. UNMASTERED.
   # @return Bool returns true if file upload successful, false if not
-  def upload_file(local_file_path, bucket_path=nil)
+  def upload_file(local_file_path, path=bucket_path)
 
     # will blow up tests if put in initialize
-    unless (required_keys - @env.keys).empty?
-      raise ArgumentError, "env must contain #{required_keys.join(', ')}"
+    unless (@required_keys - @env.keys).empty?
+      raise ArgumentError, "env must contain #{@required_keys.join(', ')}"
     end
 
-    @bucket.object(make_bucket_path(bucket_path, local_file_path))
-      .upload_file(local_file_path) # TODO: Am I 100% sure this is a file path and not an IO object?
+    @bucket.object(path).upload_file(local_file_path) # TODO: Am I 100% sure this is a file path and not an IO object?
   end
 
   # assembles, normalizes, remembers a bucket path.
