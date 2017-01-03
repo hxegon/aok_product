@@ -5,58 +5,71 @@ require 'json'
 require 'dotenv'
 Dotenv.load
 
+# CLEAN MP, doesn't override core method.
+class String
+  # Clean string of regex, return string. Returns string even if regex doesn't match
+  def normalize(pattern, replacement)
+    (val = gsub(pattern, replacement)) == true ? self : val
+  end
+end
+
 # A module that wraps the AWS gem into a focused interface for uploading files
 # to s3. Can infer the bucket path from either the last bucket path you used, or
 # what you specify (either with bucket_path= or passed in with .new).
 # @note You need some env variables with s3 tokens: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
 # @example Explicit usage pattern:
-#   bucket_name     = 'bucketname'
-#   bucket_path     = 'Staging/test.json'
-#   local_file_path = 'test.json'
-#   F2S3.upload_file(local_file_path, bucket_path, bucket_name)
+#   client = F2S3.new(bucket_name)
+#   client.upload_file('/tmp/farquad.json', 'Staging/test.json')
 # @example Implicit usage pattern:
-#   bucket_name = 'bucketname'
-#   bucket_path = 'Staging'
-#   client = F2S3.new(bucket_name, bucket_path) # you can also set bucket_path with #bucket_path=
-#   client.upload_file('test.json')
+#   client = F2S3.new(bucket_name)
+#   client.bucket_folder   = 'Staging'
+#   client.bucket_filename = 'test.json'
+#   client.upload_file('/tmp/farquad.json')
 class F2S3
   # def self.new_from_env
+  attr_accessor :target_filename, :bucket_folder, :bucket_filename
+  
+  # @param env [Hash] ENV by default, see @required_keys.
+  def initialize(bucket:, env:ENV)
+    @s3     = Aws::S3::Resource.new
+    @bucket = @s3.bucket(bucket)
+    @env    = env
 
-  def initialize(bucket_name, bucket_path=nil)
-    @s3               = Aws::S3::Resource.new
-    @bucket           = @s3.bucket(bucket_name)
-    @last_bucket_path = bucket_path
     @required_keys = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
   end
-
-  # def self.upload_file(bucket_name # For a simpler interface
 
   # UNSAFE. UNTESTED. UNTITLED. UNMASTERED.
   # @return Bool returns true if file upload successful, false if not
   def upload_file(local_file_path, bucket_path=nil)
+
+    # will blow up tests if put in initialize
+    unless (required_keys - @env.keys).empty?
+      raise ArgumentError, "env must contain #{required_keys.join(', ')}"
+    end
+
     @bucket.object(make_bucket_path(bucket_path, local_file_path))
       .upload_file(local_file_path) # TODO: Am I 100% sure this is a file path and not an IO object?
   end
 
-  # set the bucket path used to infer bucket paths
-  def bucket_path=(bucket_path)
-    @last_bucket_path = bucket_path
-  end
+  # assembles, normalizes, remembers a bucket path.
+  def bucket_path(folder:nil, filename:nil)
+    folder    ||= bucket_folder
+    filename  ||= bucket_filename
 
-  # Handles the bucket_path inference plumbing
-  def make_bucket_path(bucket_path, local_file_path)
-    @last_bucket_path = bucket_path || infer_bucket_path(local_file_path)
+    folder      = normalize_folder(folder)
+    filename    = normalize_filename(filename)
+
+    (Pathname.new(bucket_folder) + Pathname(bucket_filename)).to_s
   end
 
   private
 
-  # Tries to infer the bucket_path from the last used bucket path
-  def infer_bucket_path(file_target)
-    if @last_bucket_path.nil?
-      raise RuntimeError, "No @last_bucket_path to infer bucket path from. Try specifying manually."
-    end
+  def normalize_folder(folder)
+    @bucket_folder = folder.match?(/\/$/) ? folder : (folder + '/')
+  end
 
-    Pathname.dirname(@last_bucket_path) + Pathname.basename(file_target)
+  def normalize_filename(filename)
+    @bucket_filename = filename.normalize(/^\//, '')
   end
 end
 
@@ -84,7 +97,7 @@ class S3Destination
   # @return Whatever @client.upload_file returns
   def close
     # convert rows to json
-    tmp = Tempfile.new('S3Destination_tmpfile')
+    tmp = Tempfile.new('S3Destination')
     tmp.write(rows.to_json)
     tmp.close # close(ing) the file commits the write
 

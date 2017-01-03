@@ -69,18 +69,13 @@ RSpec.describe F2S3 do
         expect(actual).to eq (bucket_folder + diff_filename)
       end
     end
+  end
 
     context 'joining' do
       it 'joins correctly when folder doesn\'t include a trailing slash' do
-        actual = f2s3.bucket_path folder: 'Folder', filename: 'filename.json'
-        expect(actual).to eq 'Folder/filename.json'
       end
 
-      it 'joins correctly when filename includes a preceding slash' do
-        actual = f2s3.bucket_path folder: 'Folder/', filename: '/filename.json'
-        expect(actual).to eq 'Folder/filename.json'
-      end
+      it 'joins correctly when filename includes a preceding slash'
     end
-  end
 
 end
