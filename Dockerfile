@@ -2,8 +2,7 @@ FROM ruby:2.4.0-alpine
 
 WORKDIR /app
 
-COPY Gemfile /app/
-COPY Gemfile.lock /app/
+COPY Gemfile* ./
 
 RUN apk update && \
     apk add --no-cache --virtual build-deps ruby-dev build-base && \
