@@ -1,0 +1,6 @@
+.git
+.env
+.dockerignore
+.ruby-version
+processing_inbox
+tmp
