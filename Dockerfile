@@ -15,4 +15,4 @@ COPY . .
 RUN mkdir processing_inbox
 
 ENTRYPOINT /usr/local/bundle/bin/bundle exec kiba bin/upload_file.etl
-CMD [ "/bin/ash" ] # DEBUG # ash is the alpine linux shell
+# CMD [ "/bin/ash" ] # DEBUG # ash is the alpine linux shell
