@@ -21,7 +21,8 @@ class Extractor # Flog Score: 29
       :description,
       :sku,
       :upc,
-      :shipping_category
+      :shipping_category,
+      :id
     ]
   end
 
