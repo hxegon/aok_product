@@ -3,8 +3,6 @@ source 'https://rubygems.org'
 # ruby '~> 2.2.5'
 ruby '~> 2.4' # because String#match?
 
-gem 'activesupport', require: false
-gem 'thor'
 gem 'kiba'
 gem 'aws-sdk'
 gem 'dotenv'

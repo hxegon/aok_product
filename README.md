@@ -1,5 +1,16 @@
 ## Usage
 
+Make sure you have docker installed on your system.
+if you run ```docker-compose version```, your version should be at least 1.6
+
+For the dev container:
+```bash
+# to build the image
+docker build -f dev.df -t aok_product:dev .
+# to run it
+docker-compose run --rm aok_p_dev
+```
+
 ## Documentation
 TODO link this
 Bug me if I haven't linked this yet, but I have to finish writing the yard doc comments.

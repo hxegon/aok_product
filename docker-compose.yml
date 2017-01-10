@@ -1,0 +1,14 @@
+version: "2.1"
+
+services:
+  aok_product_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile_dev
+    image: aok_product:dev
+    entrypoint: /bin/ash
+    stdin_open: true
+    tty: true
+    env_file: .env
+    volumes:
+      - .:/app

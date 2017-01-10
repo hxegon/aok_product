@@ -1,0 +1,8 @@
+.git
+.env
+.dockerignore
+.ruby-version
+processing_inbox
+tmp
+tags
+README.md
