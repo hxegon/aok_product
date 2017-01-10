@@ -1,0 +1,17 @@
+FROM ruby:2.4.0-alpine
+
+WORKDIR /app
+
+COPY Gemfile* ./
+
+# DEV DIFFERENCE: Build-deps are kept, development & test gem groups are installed
+RUN apk update && \
+    apk add --no-cache --virtual build-deps ruby-dev build-base && \
+    gem install bundler --no-ri --no-rdoc && \
+    bundle install
+
+RUN mkdir processing_inbox
+
+# DEV DIFFERENCE: ENTRYPOINT is commented out, CMD is the shell.
+# ENTRYPOINT /usr/local/bundle/bin/bundle exec kiba bin/upload_file.etl
+CMD [ "/bin/ash" ] # ash is the alpine linux shell
