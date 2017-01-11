@@ -5,9 +5,13 @@ require_relative '../lib/csv_source.rb'
 require_relative '../lib/aok_extractor.rb'
 require_relative '../lib/s3_destination.rb'
 
-CSV_FILES_PATH = 'processing_inbox/*.csv'
+CSV_FOLDER_PATH = 'processing_inbox'
 
-Dir[CSV_FILES_PATH].each do |file|
+csv_files = Dir[CSV_FOLDER_PATH + '/*.csv']
+
+abort "No CSV files found" if csv_files.empty?
+
+csv_files.each do |file|
   source CSVSource, File.read(file)
 end
 
