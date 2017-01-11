@@ -4,7 +4,7 @@ services:
   aok_product_dev:
     build:
       context: .
-      dockerfile: Dockerfile_dev
+      dockerfile: dev.df
     image: aok_product:dev
     entrypoint: /bin/ash
     stdin_open: true
