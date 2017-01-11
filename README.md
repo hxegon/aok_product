@@ -8,7 +8,7 @@ For the dev container:
 # to build the image
 docker build -f dev.df -t aok_product:dev .
 # to run it
-docker-compose run --rm aok_p_dev
+docker-compose run --rm aok_product_dev
 ```
 
 ## Documentation
