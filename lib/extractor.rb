@@ -22,7 +22,8 @@ class Extractor # Flog Score: 29
       :sku,
       :upc,
       :shipping_category,
-      :id
+      :id,
+      :available_on
     ]
   end
 

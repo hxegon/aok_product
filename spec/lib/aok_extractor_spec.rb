@@ -111,5 +111,21 @@ RSpec.describe AOKExtractor do
         expect(aok_e.id(row)).to_not eq old_id
       end
     end
+
+    context ':available_on' do
+      it 'exists' do
+        expect(aok_e.available_on({})['available_on']).to_not be_nil
+      end
+    end
+
+    context ':images' do
+      it 'converts .ashx urls to .jpg' do
+        row      = { 'images' => 'https://imgur.com/foobie.ashx' }
+        actual   = aok_e.images(row)['images'][0]['url']
+        expected = 'https://imgur.com/foobie.jpg'
+
+        expect(actual).to eq expected
+      end
+    end
   end
 end
