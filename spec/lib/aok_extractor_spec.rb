@@ -111,5 +111,11 @@ RSpec.describe AOKExtractor do
         expect(aok_e.id(row)).to_not eq old_id
       end
     end
+
+    context ':available_on' do
+      it 'exists' do
+        expect(aok_e.available_on({})['available_on']).to_not be_nil
+      end
+    end
   end
 end

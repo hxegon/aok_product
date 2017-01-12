@@ -86,4 +86,8 @@ class AOKExtractor < Extractor
   def id(row)
     { 'id' => row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s }
   end
+
+  def available_on(row)
+    { 'available_on' => Date.today.iso8601 }
+  end
 end
