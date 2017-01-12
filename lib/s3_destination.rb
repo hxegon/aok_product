@@ -1,17 +1,10 @@
 require 'aws-sdk'
 require 'json'
+require_relative 'string_normalize'
 
 # TODO: this should not be in this file
 require 'dotenv'
 Dotenv.load
-
-# CLEAN MP, doesn't override core method.
-class String
-  # Clean string of regex, return string. Returns string even if regex doesn't match
-  def normalize(pattern, replacement)
-    (val = gsub(pattern, replacement)) == true ? self : val
-  end
-end
 
 # A module that wraps the AWS gem into a focused interface for uploading files
 # to s3. Can infer the bucket path from either the last bucket path you used, or
