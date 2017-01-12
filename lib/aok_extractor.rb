@@ -1,5 +1,6 @@
 require_relative 'image_converter'
 require_relative 'extractor'
+require_relative 'string_normalize'
 
 module HashGrepFirst
   refine Hash do
@@ -23,7 +24,13 @@ class AOKExtractor < Extractor
 
   def images(row)
     raw_images = row[row.keys.grep(/images/i).first]
-    { 'images' => ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg') } # TMP: Give cheeky 404 image if raw_images is nil
+    images      = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
+    images.each do |image|
+      image.each do |(k, v)|
+        image[k] = v.normalize(/.ashx\s*\z/i, '.jpg') if k == 'url'
+      end
+    end
+    { 'images' => images } # TMP: Give cheeky 404 image if raw_images is nil
   end
 
   def properties(row)
