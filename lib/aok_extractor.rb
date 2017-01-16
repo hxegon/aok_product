@@ -27,7 +27,7 @@ class AOKExtractor < Extractor
     images      = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
     images.each do |image|
       image.each do |(k, v)|
-        image[k] = v.normalize(/.ashx\s*\z/i, '.jpg') if k == 'url'
+        image[k] = URI.decode(v).normalize(/.ashx\s*\z/i, '.jpg') if k == 'url'
       end
     end
     { 'images' => images } # TMP: Give cheeky 404 image if raw_images is nil
