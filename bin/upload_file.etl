@@ -46,8 +46,14 @@ end
 
 prod_only do
   client                 = F2S3.new bucket: 'aokproduct'
-  client.bucket_folder   = 'Test/'
-  client.bucket_filename = 'products.json'
+  debug do
+    client.bucket_folder   = 'Test/'
+    client.bucket_filename = 'products.json'
+  end
+  prod_only do
+    client.bucket_folder   = ENV['KIBA_BUCKET_FOLDER']
+    client.bucket_filename = ENV['KIBA_BUCKET_FILENAME']
+  end
 
   destination S3Destination, client
 end
