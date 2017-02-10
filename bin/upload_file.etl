@@ -5,13 +5,37 @@ require_relative '../lib/csv_source.rb'
 require_relative '../lib/aok_extractor.rb'
 require_relative '../lib/s3_destination.rb'
 
-CSV_FOLDER_PATH = 'processing_inbox'
+def debug(&block)
+  if ENV["KIBA_DEBUG_MODE"]
+    yield
+  end
+end
 
-csv_files = Dir[CSV_FOLDER_PATH + '/*.csv']
+def prod_only(&block)
+  unless ENV["KIBA_DEBUG_MODE"]
+    yield
+  end
+end
 
-abort "No CSV files found" if csv_files.empty?
+ENV_HELP_TEXT = <<EOS.freeze
+This tool requires a CSV file, or files, to be specified.
+This is done through the use of environment variables.
+Here's an example:
 
-csv_files.each do |file|
+$ CSV_PATHS=inbox/1.csv,inbox/2.csv bundle exec kiba bin/upload_file.etl
+As seen in the example, you can pick multiple CSVs by separating them with a , character.
+EOS
+
+CSV_PATHS = ENV["CSV_PATHS"]&.split(',')
+
+debug do
+  puts CSV_PATHS
+end
+
+abort ENV_HELP_TEXT if CSV_PATHS.nil?
+abort "No CSV files found" if CSV_PATHS.empty?
+
+CSV_PATHS.each do |file| # Does specifying multiple sources like this even work?
   source CSVSource, File.read(file)
 end
 
@@ -20,8 +44,16 @@ transform do |row|
     .reduce(&:merge)            # [Hash] -> Hash
 end
 
-client                 = F2S3.new bucket: 'aokproduct'
-client.bucket_folder   = 'Test/'
-client.bucket_filename = 'products.json'
+prod_only do
+  client                 = F2S3.new bucket: 'aokproduct'
+  debug do
+    client.bucket_folder   = 'Test/'
+    client.bucket_filename = 'products.json'
+  end
+  prod_only do
+    client.bucket_folder   = ENV['KIBA_BUCKET_FOLDER']
+    client.bucket_filename = ENV['KIBA_BUCKET_FILENAME']
+  end
 
-destination S3Destination, client
+  destination S3Destination, client
+end

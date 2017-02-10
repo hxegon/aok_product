@@ -6,7 +6,8 @@ class CSVSource
   end
 
   def initialize(text)
-    @products = CSV.parse(text, headers: true, row_sep: :auto)
+    empty_row_rgx = /^[,"\s]*$/
+    @products = CSV.parse(text, headers: true, skip_lines: empty_row_rgx, row_sep: :auto)
   end
 
   def each
