@@ -12,23 +12,16 @@ module MapWithIndex
 end
 
 # Reformat image fields from jensen csv hashes to strip flattening artifacts.
-# @see .call
-# @note nothing in this class does URL validation.
-class ImageConverter
+# @note No url validation
+module ImageConverter
   using MapWithIndex
 
   # @param urls [String]
   # @return [Hash]
-  def self.urls_to_image_hash(urls)
-    urls.map_with_index do |e, ind|
-      { 'title' => "Image #{ind + 1}", 'url' => e }
+  # renamed from: urls_to_image_hash
+  def self.convert(urls)
+    urls.map_with_index do |url, ind|
+      { 'title' => "Image #{ind + 1}", 'url' => url }
     end
-  end
-
-  # Converts a row # SHOULDN'T EXIST. Row field finding / extraction logic should be in extractor
-  # THIS IS ALSO DESTRUCTIVE. NEEDS TO BE REWRITTEN
-  def self.convert(raw_images_string)
-    urls_to_image_hash(raw_images_string.split('&&'))
-    # row.merge('images' => urls_to_image_hash(row['images'].split('&&')))
   end
 end
