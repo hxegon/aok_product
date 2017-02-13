@@ -23,8 +23,8 @@ class AOKExtractor < Extractor
   end
 
   def images(row)
-    raw_images = row[row.keys.grep(/images/i).first]
-    images      = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
+    raw_images = row.grep_first(/images/i)
+    images     = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
     images.each do |image|
       image.each do |(k, v)|
         image[k] = URI.decode(v).normalize(/.ashx\s*\z/i, '.jpg') if k == 'url'
@@ -44,7 +44,7 @@ class AOKExtractor < Extractor
   end
 
   def brand(row)
-    { 'brand' => row[row.keys.grep(/brand/i).first] }
+    { 'brand' => row.grep_first(/brand/i) }
   end
 
   def price(row)
@@ -53,7 +53,7 @@ class AOKExtractor < Extractor
     # b) Clear and visible as much as possible
     # I'm going to have this raise NotImplementedError, to force the caller to implement it
     # in a more visible place
-    { 'price' => Float(row[row.keys.grep(/price/i).first]) }
+    { 'price' => Float(row.grep_first(/price/i)) }
   end
 
   def cost(row)
@@ -66,24 +66,24 @@ class AOKExtractor < Extractor
   end
 
   def name(row)
-    { 'name' => row[row.keys.grep(/name/i).first] }
+    { 'name' => row.grep_first(/name/i) }
   end
 
   def description(row)
-    { 'description' => row[row.keys.grep(/description/i).first] || '' }
+    { 'description' => row.grep_first(/description/i) || '' }
   end
 
   def sku(row)
-    { 'sku' => row[row.keys.grep(/sku/i).first] }
+    { 'sku' => row.grep_first(/sku/i) }
   end
 
   def upc(row)
     # Check this expression @ sku
-    { 'upc' => row[row.keys.grep(/upc\s*(code)?\s*$/i).first] }
+    { 'upc' => row.grep_first(/upc\s*(code)?\s*$/i) }
   end
 
   def shipping_category(row)
-    { 'shipping_category' => row[row.keys.grep(/shipping category/i).first] }
+    { 'shipping_category' => row.grep_first(/shipping category/i) }
   end
 
   # Not defined, as specified by the readme
