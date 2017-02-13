@@ -42,39 +42,39 @@ class Extractor # Flog Score: 29
   end
 
   def images
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def properties
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def brand
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def price
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def cost
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def name
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def description
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def sku
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def upc
-    raise NotImplement
+    raise NotImplementedError
   end
 
   def shipping_category
