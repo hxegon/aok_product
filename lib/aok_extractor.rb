@@ -16,9 +16,9 @@ class AOKExtractor < Extractor
   def taxons(row)
     { 'taxons' =>
       row.keys.grep(/taxon/i).map do |k|
-        row[k].split('&&')                                     # Split taxon strings
+        row[k].split('&&')                                 # Split taxon strings
           .map { |taxon_string| taxon_string.split('//') } # Split to taxon chain
-      end.flatten(1)                                           # turn [ [ [taxon chain] ] ] to [ [taxon chain] ]
+      end.flatten(1)                                       # turn [ [ [taxon chain] ] ] to [ [taxon chain] ]
     }
   end
 
