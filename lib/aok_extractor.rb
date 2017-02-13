@@ -23,10 +23,9 @@ class AOKExtractor < Extractor
   end
 
   def images(row)
-    raw_images = row.grep_first(/images/i).split('&&')
-    # TMP: Give cheeky 404 image if raw_images is nil
-    images     = ImageConverter.clean_convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
-    { 'images' => images }
+    raw_images  = row.grep_first(/images/i).split('&&')
+    default_img = 'https://i.imgur.com/BAbXpMz.jpg'
+    { 'images' => ImageConverter.clean_convert(raw_images || default_img) }
   end
 
   def properties(row)
