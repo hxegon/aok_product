@@ -2,7 +2,7 @@ require_relative '../../lib/image_converter'
 
 IC = ImageConverter
 RSpec.describe IC do
-  context '#call' do
+  context '#convert' do
     it 'returns a whole row, with just the images converted' do
       image_urls = %w(http://imgur.com/bbqrofllmao http://imagebucket.com/foobiebelch?=barbazlol)
       expected = [
