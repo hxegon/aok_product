@@ -48,20 +48,10 @@ class AOKExtractor < Extractor
   end
 
   def price(row)
-    # Because this is something that should be:
-    # a) Completely unambiguous
-    # b) Clear and visible as much as possible
-    # I'm going to have this raise NotImplementedError, to force the caller to implement it
-    # in a more visible place
     { 'price' => Float(row.grep_first(/price/i)) }
   end
 
   def cost(row)
-    # Because this is something that should be:
-    # a) Completely unambiguous
-    # b) Clear and visible as much as possible
-    # I'm going to have this raise NotImplementedError, to force the caller to implement it
-    # in a more visible place
     { 'cost' => 0.00 }
   end
 
