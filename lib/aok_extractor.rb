@@ -23,7 +23,7 @@ class AOKExtractor < Extractor
   end
 
   def images(row)
-    raw_images = row.grep_first(/images/i)
+    raw_images = row.grep_first(/images/i).split('&&')
     images     = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
     images.each do |image|
       image.each do |(k, v)|
