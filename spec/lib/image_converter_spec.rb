@@ -11,7 +11,7 @@ RSpec.describe IC do
         { 'title' => 'Image 2', 'url' => image_urls[1] }
       ] }
 
-      expect(IC.call(row)).to eq expected
+      expect(IC.convert(row)).to eq expected
     end
   end
 end

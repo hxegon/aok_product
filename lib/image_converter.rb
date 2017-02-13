@@ -25,16 +25,6 @@ class ImageConverter
     end
   end
 
-  # alias to .convert
-  # @see convert
-  def self.call(row)
-    convert(row)
-  end
-
-  def self.to_proc
-    proc { |row| self.class.convert(row) }
-  end
-
   # Converts a row # SHOULDN'T EXIST. Row field finding / extraction logic should be in extractor
   # THIS IS ALSO DESTRUCTIVE. NEEDS TO BE REWRITTEN
   def self.convert(raw_images_string)
