@@ -1,5 +1,6 @@
 require 'csv'
 
+# Thin wrapper around the CSV library. Enables use with kiba.
 class CSVSource
   def self.from_file(filename)
     new(File.read(filename))
