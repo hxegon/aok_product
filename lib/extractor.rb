@@ -3,17 +3,6 @@
 #   - refactor other methods to use #send instead of #call
 #   - Should extractor be a super class? Yes
 
-# # This will let you define new per instance step methods. Doesn't alter host
-# # class. Technically makes this an Abstract Factory, and AOKExtractor a
-# # Factory?
-# class Extractor
-#   def define_step(name)
-#     # Can't use define_method directly, it's a private method.
-#     self.class.send(:define_method, name.to_sym) do |row|
-#       { name.to_s => (yield row) }
-#     end
-#   end
-# end
 
 # Manages and executes steps
 class Extractor # Flog Score: 29
@@ -39,14 +28,24 @@ class Extractor # Flog Score: 29
     ]
   end
 
-  def to_proc
-    proc { |value| extract(value) }
+  # This will let you define new per instance step methods. Doesn't alter host
+  # class. Technically makes this an Abstract Factory, and AOKExtractor a
+  # Factory?
+  def define_step(name)
+    # Can't use define_method directly, it's a private method.
+    self.class.send(:define_method, name.to_sym) do |row|
+      { name.to_s => (yield row) }
+    end
   end
 
   def extract(row)
     @steps.map do |step_name|
       send(step_name, row)
     end
+  end
+
+  def to_proc
+    proc { |value| extract(value) }
   end
 
   def taxons
