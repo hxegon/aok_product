@@ -14,6 +14,7 @@ end
 
 class AOKExtractor < Extractor
   using HashGrepFirst
+  DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
 
   def taxons(row)
     { 'taxons' =>
@@ -26,8 +27,7 @@ class AOKExtractor < Extractor
 
   def images(row)
     raw_images  = row.grep_first(/images/i)&.split('&&')
-    default_img = 'https://i.imgur.com/BAbXpMz.jpg'
-    { 'images' => ImageConverter.clean_convert(raw_images || default_img) }
+    { 'images' => ImageConverter.clean_convert(raw_images || DEFAULT_IMAGE) }
   end
 
   def properties(row)
