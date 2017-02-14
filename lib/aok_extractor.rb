@@ -25,6 +25,8 @@ class AOKExtractor < AbstractExtractor
   NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
 
   def initialize
+    super
+
     # ... define steps here
     define_step(:taxons) do |row|
       row.keys.grep(/taxon/i).map do |taxon_key|
@@ -90,7 +92,5 @@ class AOKExtractor < AbstractExtractor
     # Not defined, as specified by the readme
     # define_step(:options) do |row|
     # end
-
-    super
   end
 end
