@@ -1,8 +1,4 @@
 # TODO: examples
-# TODO: REWRITE ADD to define_method instead of storing a lambda hash.
-#   - refactor other methods to use #send instead of #call
-#   - Should extractor be a super class? Yes
-
 
 # Manages and executes steps
 class AbstractExtractor # Flog Score: 29
@@ -28,13 +24,12 @@ class AbstractExtractor # Flog Score: 29
     ]
   end
 
-  # Takes a block that takes a row. Result of this is put into a hash. Key is the
-  # name given to #define_step, and the value is the return val of the block.
-  # This will let you define new per instance step methods. Doesn't alter host
-  # class.
+  # Takes a block that takes a row. Result of this is put into a hash. Key is
+  # the name given to #define_step, and the value is the return val of the
+  # block. Adds step to @step_methods. This will let you define new per
+  # instance step methods. Doesn't alter host class.
   def define_step(name)
     # Can't use define_method directly, it's a private method.
-    # TODO add a given step to @step_methods
     @step_methods << name.to_sym
     self.class.send(:define_method, name.to_sym) do |row|
       { name.to_s => (yield row) }
