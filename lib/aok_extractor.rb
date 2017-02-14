@@ -4,6 +4,8 @@ require_relative 'string_normalize'
 
 module HashGrepFirst
   refine Hash do
+    # Grep through hash keys for a given regex, and return the val of the first
+    # matching key.
     def grep_first(pattern)
       self[keys.grep(pattern).first]
     end
