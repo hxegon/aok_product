@@ -5,7 +5,7 @@
 
 
 # Manages and executes steps
-class Extractor # Flog Score: 29
+class AbstractExtractor # Flog Score: 29
   def initialize
     # GOALS:
     # Extensibility (user can add, remove extractor steps by name)
@@ -29,8 +29,7 @@ class Extractor # Flog Score: 29
   end
 
   # This will let you define new per instance step methods. Doesn't alter host
-  # class. Technically makes this an Abstract Factory, and AOKExtractor a
-  # Factory?
+  # class.
   def define_step(name)
     # Can't use define_method directly, it's a private method.
     self.class.send(:define_method, name.to_sym) do |row|

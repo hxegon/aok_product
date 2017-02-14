@@ -12,77 +12,79 @@ module HashGrepFirst
   end
 end
 
-class AOKExtractor < Extractor
+class AOKExtractorFactory < AbstractExtractorFactory
   using HashGrepFirst
+
   DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
   NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
 
-  def taxons(row)
-    { 'taxons' =>
-      row.keys.grep(/taxon/i).map do |k|
-        row[k].split('&&')                                 # Split taxon strings
+  def initialize
+    # ... define steps here
+    define_step(:taxons) do |row|
+      row.keys.grep(/taxon/i).map do |taxon_key|
+        row[taxon_key].split('&&')                         # Split taxon strings
           .map { |taxon_string| taxon_string.split('//') } # Split to taxon chain
       end.flatten(1)                                       # turn [ [ [taxon chain] ] ] to [ [taxon chain] ]
-    }
-  end
+    end
 
-  def images(row)
-    raw_images  = row.grep_first(/images/i)&.split('&&')
-    { 'images' => ImageConverter.clean_convert(raw_images || DEFAULT_IMAGE) }
-  end
-
-  def properties(row)
-    { 'properties' =>
+    define_step(:properties) do |row|
       row.select { |header, _| header[0] == '@' }  # find cells with attribute headers
         .reject { |_, val| val =~ NIL_FIELD_REGEXP } # check is only x and or whitespace
         .map { |(k, v)| [k.sub(/@/, ''), v] }        # remove attr identifier char: '@'
         .map { |hash_arr| Hash[*hash_arr] }          # convert Hash map output (Array of Arrays) to Array of Hashes
-        .reduce(&:merge) || {}                       # merge Array of Hashes into single hash
-    }
-  end
+        .reduce(&:merge) || {}                       # merge Array of Hashes into single h
+    end
 
-  def brand(row)
-    { 'brand' => row.grep_first(/brand/i) }
-  end
+    define_step(:brand) do |row|
+      row.grep_first(/brand/i)
+    end
 
-  def price(row)
-    { 'price' => Float(row.grep_first(/price/i)) }
-  end
+    define_step(:price) do |row|
+      Float(row.grep_first(/price/i))
+    end
 
-  def cost(row)
-    { 'cost' => 0.00 }
-  end
+    define_step(:cost) do |_|
+      0.0
+    end
 
-  def name(row)
-    { 'name' => row.grep_first(/name/i) }
-  end
+    define_step(:name) do |row|
+      row.grep_first(/name/i)
+    end
 
-  def description(row)
-    { 'description' => row.grep_first(/description/i) || '' }
-  end
+    define_step(:description) do |row|
+      row.grep_first(/description/i) || ''
+    end
 
-  def sku(row)
-    { 'sku' => row.grep_first(/sku/i) }
-  end
+    define_step(:sku) do |row|
+      row.grep_first(/sku/i)
+    end
 
-  def upc(row)
-    # Check this expression @ sku
-    { 'upc' => row.grep_first(/upc\s*(code)?\s*$/i) }
-  end
+    define_step(:upc) do |row|
+      # Check this expression @ sku
+      row.grep_first(/upc\s*(code)?\s*$/i)
+    end
 
-  def shipping_category(row)
-    { 'shipping_category' => row.grep_first(/shipping category/i) }
-  end
+    define_step(:shipping_category) do |row|
+      row.grep_first(/shipping category/i)
+    end
 
-  # Not defined, as specified by the readme
-  # def options(row)
-  # end
+    define_step(:id) do |row|
+      row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s
+    end
 
-  def id(row)
-    { 'id' => row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s }
-  end
+    define_step(:available_on) do |_|
+      Date.today.iso8601
+    end
 
-  def available_on(row)
-    { 'available_on' => Date.today.iso8601 }
+    define_step(:images) do |row|
+      raw_images = row.grep_first(/images/i)&.split('&&')
+      ImageConverter.clean_convert(raw_images || DEFAULT_IMAGE)
+    end
+
+    # Not defined, as specified by the readme
+    # define_step(:options) do |row|
+    # end
+
+    super
   end
 end
