@@ -11,7 +11,7 @@ class AbstractExtractor # Flog Score: 29
     # Extensibility (user can add, remove extractor steps by name)
     # Steps only extract/transform parts they are concerned with
     # => they don't worry about mutating the result product to insert themselves back in
-    @step_methods = Set[ # TODO: should this be a Set? Extracted to constant? Frozen?
+    @step_methods = Set[
       :taxons,
       :images,
       :properties,
@@ -35,6 +35,7 @@ class AbstractExtractor # Flog Score: 29
   def define_step(name)
     # Can't use define_method directly, it's a private method.
     # TODO add a given step to @step_methods
+    @step_methods << name.to_sym
     self.class.send(:define_method, name.to_sym) do |row|
       { name.to_s => (yield row) }
     end
