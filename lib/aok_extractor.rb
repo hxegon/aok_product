@@ -2,6 +2,12 @@ require_relative 'image_converter'
 require_relative 'extractor'
 require_relative 'string_normalize'
 
+# NOTES:
+# Should NIL_FIELD_REGEXP, the attribute header detection logic, taxon
+# separator, image separator, and so on be moved to Extractor or some other
+# module/class? Sort of the "<s>domain</s>format logic".
+
+# TODO: Extract to separate file.
 module HashGrepFirst
   refine Hash do
     # Grep through hash keys for a given regex, and return the val of the first
@@ -12,7 +18,7 @@ module HashGrepFirst
   end
 end
 
-class AOKExtractorFactory < AbstractExtractorFactory
+class AOKExtractor < AbstractExtractor
   using HashGrepFirst
 
   DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze

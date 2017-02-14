@@ -11,7 +11,7 @@ class AbstractExtractor # Flog Score: 29
     # Extensibility (user can add, remove extractor steps by name)
     # Steps only extract/transform parts they are concerned with
     # => they don't worry about mutating the result product to insert themselves back in
-    @steps = [
+    @steps = [ # TODO: should this be a Set?
       :taxons,
       :images,
       :properties,
@@ -28,10 +28,13 @@ class AbstractExtractor # Flog Score: 29
     ]
   end
 
+  # Takes a block that takes a row. Result of this is put into a hash. Key is the
+  # name given to #define_step, and the value is the return val of the block.
   # This will let you define new per instance step methods. Doesn't alter host
   # class.
   def define_step(name)
     # Can't use define_method directly, it's a private method.
+    # TODO add a given step to @steps
     self.class.send(:define_method, name.to_sym) do |row|
       { name.to_s => (yield row) }
     end
@@ -49,7 +52,7 @@ class AbstractExtractor # Flog Score: 29
 
   # NotImplementedError step stubs. If you call #extract on a subclass without
   # implementing all of the step methods, it will tell you which ones aren't
-  # implemented.
+  # implemented. Could probably do this with method_missing and @steps.
 
   def taxons
     raise NotImplementedError
