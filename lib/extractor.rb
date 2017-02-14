@@ -50,59 +50,13 @@ class AbstractExtractor # Flog Score: 29
     proc { |value| extract(value) }
   end
 
-  # NotImplementedError step stubs. If you call #extract on a subclass without
-  # implementing all of the step methods, it will tell you which ones aren't
-  # implemented. Could probably do this with method_missing and @steps.
-
-  def taxons
-    raise NotImplementedError
+  # Raise NotImplementedError if a step method isn't defined
+  def method_missing(method_name)
+    @step_methods.include?(method_name) ? raise(NotImplementedError) : super
   end
 
-  def images
-    raise NotImplementedError
-  end
-
-  def properties
-    raise NotImplementedError
-  end
-
-  def brand
-    raise NotImplementedError
-  end
-
-  def price
-    raise NotImplementedError
-  end
-
-  def cost
-    raise NotImplementedError
-  end
-
-  def name
-    raise NotImplementedError
-  end
-
-  def description
-    raise NotImplementedError
-  end
-
-  def sku
-    raise NotImplementedError
-  end
-
-  def upc
-    raise NotImplementedError
-  end
-
-  def shipping_category
-    raise NotImplementedError
-  end
-
-  def id
-    raise NotImplementedError
-  end
-
-  def available_on
-    raise NotImplementedError
+  # prevents #method and #responds_to? from misbehaving.
+  def respond_to_missing?(method_name, _)
+    @step_methods.include?(method_name) ? true : super
   end
 end
