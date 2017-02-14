@@ -11,7 +11,7 @@ class AbstractExtractor # Flog Score: 29
     # Extensibility (user can add, remove extractor steps by name)
     # Steps only extract/transform parts they are concerned with
     # => they don't worry about mutating the result product to insert themselves back in
-    @step_methods = [ # TODO: should this be a Set? Extracted to constant? Frozen?
+    @step_methods = Set[ # TODO: should this be a Set? Extracted to constant? Frozen?
       :taxons,
       :images,
       :properties,
