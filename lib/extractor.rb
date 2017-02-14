@@ -48,7 +48,9 @@ class Extractor # Flog Score: 29
     proc { |value| extract(value) }
   end
 
-  # 
+  # NotImplementedError step stubs. If you call #extract on a subclass without
+  # implementing all of the step methods, it will tell you which ones aren't
+  # implemented.
 
   def taxons
     raise NotImplementedError
