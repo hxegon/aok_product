@@ -48,6 +48,8 @@ class Extractor # Flog Score: 29
     proc { |value| extract(value) }
   end
 
+  # 
+
   def taxons
     raise NotImplementedError
   end
@@ -89,6 +91,14 @@ class Extractor # Flog Score: 29
   end
 
   def shipping_category
+    raise NotImplementedError
+  end
+
+  def id
+    raise NotImplementedError
+  end
+
+  def available_on
     raise NotImplementedError
   end
 end
