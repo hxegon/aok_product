@@ -25,7 +25,8 @@ class AOKExtractor < AbstractExtractor
   NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
 
   def initialize
-    super
+    # Keep your hoes in check...
+    super #!
 
     # ... define steps here
     define_step(:taxons) do |row|
