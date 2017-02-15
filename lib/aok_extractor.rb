@@ -23,10 +23,25 @@ class AOKExtractor < AbstractExtractor
 
   DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
   NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
+  DEFAULT_STEPS = Set[ # should these steps be extracted and added to a FlowlinkFields module or somethin?
+                       :taxons,
+                       :images,
+                       :properties,
+                       :brand,
+                       :price,
+                       :cost,
+                       :name,
+                       :description,
+                       :sku,
+                       :upc,
+                       :shipping_category,
+                       :id,
+                       :available_on
+  ]
 
   def initialize
     # Keep your hoes in check...
-    super #!
+    super(DEFAULT_STEPS) # !
 
     # ... define steps here
     define_step(:taxons) do |row|

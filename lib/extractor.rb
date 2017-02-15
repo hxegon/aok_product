@@ -2,26 +2,13 @@
 
 # Manages and executes steps
 class AbstractExtractor # Flog Score: 29
-  def initialize
+  def initialize(default_steps = Set.new)
     # GOALS:
     # Extensibility (user can add, remove extractor steps by name)
     # Steps only extract/transform parts they are concerned with
     # => they don't worry about mutating the result product to insert themselves back in
-    @step_methods = Set[
-      :taxons,
-      :images,
-      :properties,
-      :brand,
-      :price,
-      :cost,
-      :name,
-      :description,
-      :sku,
-      :upc,
-      :shipping_category,
-      :id,
-      :available_on
-    ]
+    # assert(default_steps.is_a?(Set))
+    @step_methods = default_steps
   end
 
   # Takes a block that takes a row. Result of this is put into a hash. Key is
