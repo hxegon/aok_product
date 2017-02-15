@@ -47,12 +47,12 @@ class AbstractExtractor # Flog Score: 29
   end
 
   # Raise NotImplementedError if a step method isn't defined
-  def method_missing(method_name)
-    @step_methods.include?(method_name) ? raise(NotImplementedError) : super
+  def method_missing(method_name, _)
+    @step_methods&.include?(method_name) ? raise(NotImplementedError) : super
   end
 
   # prevents #method and #responds_to? from misbehaving.
   def respond_to_missing?(method_name, _)
-    @step_methods.include?(method_name) ? true : super
+    @step_methods&.include?(method_name) ? true : super
   end
 end
