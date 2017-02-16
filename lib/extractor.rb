@@ -1,30 +1,42 @@
-# TODO: examples
+# TODO: Better documentation.
 
-# Manages and executes steps
-class AbstractExtractor # Flog Score: 29
-  def initialize(default_steps = Set.new)
-    # GOALS:
-    # Extensibility (user can add, remove extractor steps by name)
-    # Steps only extract/transform parts they are concerned with
-    # => they don't worry about mutating the result product to insert themselves back in
-    # assert(default_steps.is_a?(Set))
-    @step_methods = default_steps
-  end
+# Need to work on the description more, but for now:
+# Defines a sort of extractor dsl. See add_step(s), define_step, extract.
+# Intended for use as a superclass. Not the sort of thing I'd put in a module.
+# For an example of usage, look at aok_extractor.
+# WARNING: STEP ORDER SHOULD BE UNIMPORTANT.
+class AbstractExtractor
+  class << self
+    attr_reader :step_methods
 
-  # Takes a block that takes a row. Result of this is put into a hash. Key is
-  # the name given to #define_step, and the value is the return val of the
-  # block. Adds step to @step_methods. This will let you define new per
-  # instance step methods. Doesn't alter host class.
-  def define_step(name)
-    # Can't use define_method directly, it's a private method.
-    @step_methods << name.to_sym
-    self.class.send(:define_method, name.to_sym) do |row|
-      { name.to_s => (yield row) }
+    def add_steps(steps)
+      @step_methods ||= Set.new
+      @step_methods.merge(steps.map(&:to_sym))
+    end
+
+    def add_step(step)
+      @step_methods ||= Set.new
+      @step_methods << step.to_sym
+    end
+
+    # Takes a block that takes a row. defines a new instance method which
+    # returns the result of the block in a hash with name parameter as the key.
+    # Adds step to @step_methods.
+    def define_step(name)
+      add_step name.to_sym
+      send(:define_method, name.to_sym) { |row| { name.to_s => (yield row) } }
     end
   end
 
+  # Forward instance var request to class var
+  def step_methods
+    self.class.step_methods
+  end
+
+  # Call step methods and return results.
+  # Leaves combining the step results up to the caller.
   def extract(row)
-    @step_methods.map do |step_name|
+    step_methods.map do |step_name|
       send(step_name, row)
     end
   end
@@ -35,11 +47,11 @@ class AbstractExtractor # Flog Score: 29
 
   # Raise NotImplementedError if a step method isn't defined
   def method_missing(method_name, _)
-    @step_methods&.include?(method_name) ? raise(NotImplementedError) : super
+    step_methods&.include?(method_name) ? raise(NotImplementedError) : super
   end
 
   # prevents #method and #responds_to? from misbehaving.
   def respond_to_missing?(method_name, _)
-    @step_methods&.include?(method_name) ? true : super
+    step_methods&.include?(method_name) ? true : super
   end
 end
