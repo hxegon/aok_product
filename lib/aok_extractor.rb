@@ -18,12 +18,8 @@ module HashGrepFirst
   end
 end
 
-class AOKExtractor < AbstractExtractor
-  using HashGrepFirst
-
-  DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
-  NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
-  DEFAULT_STEPS = Set[ # should these steps be extracted and added to a FlowlinkFields module or somethin?
+module FlowlinkSteps
+  DEFAULT_STEPS = Set[
                        :taxons,
                        :images,
                        :properties,
@@ -38,6 +34,14 @@ class AOKExtractor < AbstractExtractor
                        :id,
                        :available_on
   ]
+end
+
+class AOKExtractor < AbstractExtractor
+  using HashGrepFirst
+  include FlowlinkSteps # Defines DEFAULT_STEPS used in #initialize
+
+  DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
+  NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
 
   def initialize
     # Keep your hoes in check...
