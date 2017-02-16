@@ -52,11 +52,11 @@ class AOKExtractor < AbstractExtractor
     end
 
     define_step(:properties) do |row|
-      row.select { |header, _| header[0] == '@' }  # find cells with attribute headers
-        .reject { |_, val| val =~ NIL_FIELD_REGEXP } # check is only x and or whitespace
-        .map { |(k, v)| [k.sub(/@/, ''), v] }        # remove attr identifier char: '@'
-        .map { |hash_arr| Hash[*hash_arr] }          # convert Hash map output (Array of Arrays) to Array of Hashes
-        .reduce(&:merge) || {}                       # merge Array of Hashes into single h
+      row.select { |header, _| header[0] == '@' }     # find cells with attribute headers
+         .reject { |_, val| val =~ NIL_FIELD_REGEXP } # check is only x and or whitespace
+         .map { |(k, v)| [k.sub(/@/, ''), v] }        # remove attr identifier char: '@'
+         .map { |hash_arr| Hash[*hash_arr] }          # convert Hash map output (Array of Arrays) to Array of Hashes
+         .reduce(&:merge) || {}                       # merge Array of Hashes into single h
     end
 
     define_step(:brand) do |row|
