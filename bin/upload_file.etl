@@ -54,5 +54,5 @@ prod_only do
     client.bucket_filename = ENV['KIBA_BUCKET_FILENAME']
   end
 
-  destination S3Destination, client
+  destination RemoteDestination, client
 end

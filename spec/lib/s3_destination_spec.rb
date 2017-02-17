@@ -1,13 +1,13 @@
 require_relative '../../lib/s3_destination'
 require 'json'
 
-RSpec.describe S3Destination do
+RSpec.describe RemoteDestination do
   context '#write' do
     let(:s3d) do
       # Make a dummy client object
       dummy_client = Object.new
       def dummy_client.upload_file(dummy_file_arg); true; end
-      S3Destination.new(dummy_client)
+      RemoteDestination.new(dummy_client)
     end
 
     it 'accumulates rows' do
@@ -24,7 +24,7 @@ RSpec.describe S3Destination do
         File.read(tmp_file_path)
       end
 
-      S3Destination.new(dummy_client)
+      RemoteDestination.new(dummy_client)
     end
 
     it 'calls #upload_file with a tmp file' do

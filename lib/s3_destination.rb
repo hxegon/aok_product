@@ -66,7 +66,7 @@ class F2S3
 end
 
 # Kiba wrapper for any client implementing :upload_file (see: F2S3)
-class S3Destination
+class RemoteDestination
   attr_accessor :rows
 
   def initialize(client)
