@@ -19,7 +19,7 @@ module HashGrepFirst
 end
 
 module FlowlinkSteps
-  DEFAULT_STEPS = Set[
+  REQUIRED_STEPS = Set[
                        :taxons,
                        :images,
                        :properties,
@@ -43,7 +43,7 @@ class AOKExtractor < AbstractExtractor
   DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
   NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
 
-  add_steps(DEFAULT_STEPS)
+  add_steps(REQUIRED_STEPS)
 
   define_step(:taxons) do |row|
     row.keys.grep(/taxon/i).map do |taxon_key|
