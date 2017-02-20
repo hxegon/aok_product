@@ -33,12 +33,11 @@ class AbstractExtractor
     self.class.step_methods
   end
 
-  # Call step methods and return results.
-  # Leaves combining the step results up to the caller.
+  # Call step methods, combines and return results.
   def extract(row)
     step_methods.map do |step_name|
       send(step_name, row)
-    end
+    end.reduce(&:merge)
   end
 
   def to_proc

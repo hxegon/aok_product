@@ -39,7 +39,7 @@ RSpec.describe CompleteDummyExtractor do
 
   context '#extract' do
     it 'finishes extracting in the right output format' do
-      expect(d_ext.extract(:_)).to eq([{ 'foo' => 'foo' }, { 'bar' => 'bar' }])
+      expect(d_ext.extract(:_)).to eq({ 'foo' => 'foo', 'bar' => 'bar' })
     end
   end
 end
