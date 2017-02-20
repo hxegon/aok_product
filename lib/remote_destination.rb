@@ -1,6 +1,6 @@
 require 'json'
 
-# Kiba wrapper for any client implementing :upload_file (see: F2S3)
+# Kiba wrapper for any client implementing :upload_string (see: F2S3)
 class RemoteDestination
   attr_accessor :rows
 
@@ -23,13 +23,7 @@ class RemoteDestination
   # @client.upload_file
   # @return Whatever @client.upload_file returns
   def close
-    # convert rows to json
-    tmp = Tempfile.new('S3Destination')
-    tmp.write(rows.to_json)
-    tmp.close # close(ing) the file commits the write
-
-    # The assumptions about #upload_file using a file path is jank AF
-    #                            # unlink, but return upload_file result
-    @client.upload_file(tmp.path).tap { |_| tmp.unlink }
+    # TODO: change output to something more user friendly than a upload success bool
+    @client.upload_string(rows.to_json)
   end
 end

@@ -30,16 +30,20 @@ class F2S3
     @required_keys = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
   end
 
-  # UNSAFE. UNTESTED. UNTITLED. UNMASTERED.
-  # @return Bool returns true if file upload successful, false if not
-  def upload_file(local_file_path, path=bucket_path)
+  # @return Bool returns if string upload successful
+  def upload_string(string, path = bucket_path)
+    tmp = Tempfile.new('S3Destination')
+    tmp.write(string)
+    tmp.close # close(ing) the file commits the write
 
     # will blow up tests if put in initialize
     unless (@required_keys - @env.keys).empty?
+      # TODO: make error message missing keys instead of just all required keys
       raise ArgumentError, "env must contain #{@required_keys.join(', ')}"
     end
 
-    @bucket.object(path).upload_file(local_file_path) # TODO: Am I 100% sure this is a file path and not an IO object?
+    # unlink tmpfile, but return result of upload_file
+    @bucket.object(path).upload_file(tmp.path).tap { |_| tmp.unlink }
   end
 
   # assembles, normalizes, remembers a bucket path.
