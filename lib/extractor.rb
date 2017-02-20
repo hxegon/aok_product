@@ -7,16 +7,16 @@
 # WARNING: STEP ORDER SHOULD BE UNIMPORTANT.
 class AbstractExtractor
   class << self
-    attr_reader :step_methods
+    def step_methods
+      @step_methods ||= Set.new
+    end
 
     def add_steps(steps)
-      @step_methods ||= Set.new
-      @step_methods.merge(steps.map(&:to_sym))
+      step_methods.merge(steps.map(&:to_sym))
     end
 
     def add_step(step)
-      @step_methods ||= Set.new
-      @step_methods << step.to_sym
+      step_methods << step.to_sym
     end
 
     # Takes a block that takes a row. defines a new instance method which
