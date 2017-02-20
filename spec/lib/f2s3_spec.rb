@@ -1,4 +1,4 @@
-require_relative '../../lib/s3_destination'
+require_relative '../../lib/f2s3'
 
 RSpec.describe F2S3 do
   let(:f2s3)            { F2S3.new(bucket: 'bucket_name') }
