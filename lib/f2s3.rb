@@ -43,12 +43,9 @@ class F2S3
   end
 
   # assembles, normalizes, remembers a bucket path.
-  def bucket_path(folder:nil, filename:nil)
-    folder    ||= bucket_folder
-    filename  ||= bucket_filename
-
-    folder      = normalize_folder(folder)
-    filename    = normalize_filename(filename)
+  def bucket_path(folder: bucket_folder, filename: bucket_filename)
+    bucket_folder   = normalize_folder(folder)
+    bucket_filename = normalize_filename(filename)
 
     (Pathname.new(bucket_folder) + Pathname(bucket_filename)).to_s
   end
