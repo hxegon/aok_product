@@ -11,12 +11,12 @@ Dotenv.load
 # @note You need some env variables with s3 tokens: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
 # @example Explicit usage pattern:
 #   client = F2S3.new(bucket_name)
-#   client.upload_file('/tmp/farquad.json', 'Staging/test.json')
+#   client.upload_string(data.to_json)
 # @example Implicit usage pattern:
 #   client = F2S3.new(bucket_name)
 #   client.bucket_folder   = 'Staging'
 #   client.bucket_filename = 'test.json'
-#   client.upload_file('/tmp/farquad.json')
+#   client.upload_string(data.to_json)
 class F2S3
   # def self.new_from_env
   attr_accessor :bucket_folder, :bucket_filename
