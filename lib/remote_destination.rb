@@ -5,8 +5,8 @@ class RemoteDestination
   attr_accessor :rows
 
   def initialize(client)
-    unless client.respond_to?(:upload_file)
-      raise ArgumentError, "client needs to respond to :upload_file."
+    unless client.respond_to?(:upload_string)
+      raise ArgumentError, "client needs to respond to :upload_string."
     end
 
     @rows   = []
