@@ -37,9 +37,9 @@ class F2S3
     tmp.close # close(ing) the file commits the write
 
     # will blow up tests if put in initialize
-    unless (@required_keys - @env.keys).empty?
-      # TODO: make error message missing keys instead of just all required keys
-      raise ArgumentError, "env must contain #{@required_keys.join(', ')}"
+    missing_keys = @required_keys - @env.keys
+    unless missing_keys.empty?
+      fail ArgumentError, "#{missing_keys.join(', ')} #{missing_keys.size > 1 ? 'are' : 'is'} missing from environment variables."
     end
 
     # unlink tmpfile, but return result of upload_file
