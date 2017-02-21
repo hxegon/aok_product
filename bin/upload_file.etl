@@ -44,7 +44,7 @@ transform do |row|
 end
 
 prod_only do
-  client                 = F2S3.new bucket: 'aokproduct'
+  client                   = F2S3.new bucket: 'aokproduct'
   debug do
     client.bucket_folder   = 'Test/'
     client.bucket_filename = 'products.json'
