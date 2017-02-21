@@ -32,7 +32,7 @@ class F2S3
 
   # @return Bool returns if string upload successful
   def upload_string(string, path = bucket_path)
-    tmp = Tempfile.new('S3Destination')
+    tmp = Tempfile.new('S3_Upload_Tempfile')
     tmp.write(string)
     tmp.close # close(ing) the file commits the write
 
