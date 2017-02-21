@@ -6,7 +6,7 @@ class RemoteDestination
 
   def initialize(client)
     unless client.respond_to?(:upload_string)
-      raise ArgumentError, "client needs to respond to :upload_string."
+      raise ArgumentError, 'client needs to respond to :upload_string.'
     end
 
     @rows   = []
@@ -19,11 +19,9 @@ class RemoteDestination
     rows << row
   end
 
-  # Converts accumulated rows to json, turns into a tmp file, passes it to
-  # @client.upload_file
-  # @return Whatever @client.upload_file returns
+  # Converts accumulated rows to json, passes it to @client.upload_string
+  # @return Whatever @client.upload_string returns
   def close
-    # TODO: change output to something more user friendly than a upload success bool
     @client.upload_string(rows.to_json)
   end
 end
