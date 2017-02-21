@@ -1,5 +1,4 @@
 require_relative 'extractor'
-require_relative 'string_normalize'
 require_relative 'image_converter'
 
 # NOTES:

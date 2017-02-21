@@ -1,5 +1,5 @@
 require 'aws-sdk'
-require_relative 'string_normalize'
+require_relative 'string_substitute'
 
 # TODO: this should not be in this file
 require 'dotenv'
@@ -18,6 +18,8 @@ Dotenv.load
 #   client.bucket_filename = 'test.json'
 #   client.upload_string(data.to_json)
 class F2S3
+  using StringSubstitute
+
   # TODO: Interface of this class is a fkin' mess. un/named Parameters, init-env,
   # remembered parameters after normalization, optional parameters defaulting to env
   # def self.new_from_env
@@ -64,6 +66,6 @@ class F2S3
   end
 
   def normalize_filename(filename)
-    @bucket_filename = filename.normalize(/^\//, '')
+    @bucket_filename = filename.substitute(/^\//, '')
   end
 end

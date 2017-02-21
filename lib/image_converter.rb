@@ -1,6 +1,10 @@
+require_relative 'string_substitute'
+
 # Reformat image fields from jensen csv hashes to strip flattening artifacts.
 # @note No url validation
 module ImageConverter
+  using StringSubstitute
+
   # @param urls [String]
   # @return [Hash]
   # renamed from: urls_to_image_hash
@@ -15,6 +19,6 @@ module ImageConverter
   end
 
   def self.clean(url)
-    URI.decode(url).normalize(/.ashx\s*\z/i, '.jpg')
+    URI.decode(url).substitute(/.ashx\s*\z/i, '.jpg')
   end
 end
