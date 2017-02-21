@@ -20,9 +20,9 @@ Dotenv.load
 class F2S3
   # def self.new_from_env
   attr_accessor :bucket_folder, :bucket_filename
-  
+
   # @param env [Hash] ENV by default, see @required_keys.
-  def initialize(bucket:, env:ENV)
+  def initialize(bucket:, env: ENV)
     @s3     = Aws::S3::Resource.new
     @bucket = @s3.bucket(bucket)
     @env    = env
