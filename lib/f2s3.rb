@@ -18,6 +18,8 @@ Dotenv.load
 #   client.bucket_filename = 'test.json'
 #   client.upload_string(data.to_json)
 class F2S3
+  # TODO: Interface of this class is a fkin' mess. un/named Parameters, init-env,
+  # remembered parameters after normalization, optional parameters defaulting to env
   # def self.new_from_env
   attr_accessor :bucket_folder, :bucket_filename
 
@@ -56,6 +58,7 @@ class F2S3
 
   private
 
+  # TODO: rename normalize_* methods to something more explanatory
   def normalize_folder(folder)
     @bucket_folder = folder.match?(/\/$/) ? folder : (folder + '/')
   end
