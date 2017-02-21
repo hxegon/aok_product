@@ -1,9 +1,6 @@
 require 'aws-sdk'
 require_relative 'string_substitute'
 
-# TODO: this should not be in this file
-require 'dotenv'
-Dotenv.load
 
 # A module that wraps the AWS gem into a focused interface for uploading files
 # to s3. Can infer the bucket path from either the last bucket path you used, or
