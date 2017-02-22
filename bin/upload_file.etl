@@ -44,15 +44,13 @@ transform do |row|
 end
 
 prod_only do
-  client                   = F2S3.new bucket: 'aokproduct'
   debug do
-    client.bucket_folder   = 'Test/'
-    client.bucket_filename = 'products.json'
+    path = S3::Path.new('Test/', 'products.json')
   end
   prod_only do
-    client.bucket_folder   = ENV['KIBA_BUCKET_FOLDER']
-    client.bucket_filename = ENV['KIBA_BUCKET_FILENAME']
+    path = S3::Path.new(ENV['KIBA_BUCKET_FOLDER'], ENV['KIBA_BUCKET_FILENAME'])
   end
+  client = S3::Client.new bucket: 'aokproduct', path: path
 
   destination RemoteDestination, client
 end

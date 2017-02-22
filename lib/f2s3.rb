@@ -1,68 +1,57 @@
 require 'aws-sdk'
 require_relative 'string_substitute'
 
+# TODO: update documentation
+# TODO: rename file
 
-# A module that wraps the AWS gem into a focused interface for uploading files
-# to s3. Can infer the bucket path from either the last bucket path you used, or
-# what you specify (either with bucket_path= or passed in with .new).
-# @note You need some env variables with s3 tokens: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
-# @example Explicit usage pattern:
-#   client = F2S3.new(bucket_name)
-#   client.upload_string(data.to_json)
-# @example Implicit usage pattern:
-#   client = F2S3.new(bucket_name)
-#   client.bucket_folder   = 'Staging'
-#   client.bucket_filename = 'test.json'
-#   client.upload_string(data.to_json)
-class F2S3
-  using StringSubstitute
+module S3
+  module Config 
+    REQUIRED_ENV_KEYS = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
 
-  # TODO: Interface of this class is a fkin' mess. un/named Parameters, init-env,
-  # remembered parameters after normalization, optional parameters defaulting to env
-  # def self.new_from_env
-  attr_accessor :bucket_folder, :bucket_filename
-
-  # @param env [Hash] ENV by default, see @required_keys.
-  def initialize(bucket:, env: ENV)
-    @s3     = Aws::S3::Resource.new
-    @bucket = @s3.bucket(bucket)
-    @env    = env
-
-    @required_keys = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
-  end
-
-  # @return Bool returns if string upload successful
-  def upload_string(string, path = bucket_path)
-    tmp = Tempfile.new('S3_Upload_Tempfile')
-    tmp.write(string)
-    tmp.close # close(ing) the file commits the write
-
-    # will blow up tests if put in initialize
-    missing_keys = @required_keys - @env.keys
-    unless missing_keys.empty?
-      fail ArgumentError, "#{missing_keys.join(', ')} #{missing_keys.size > 1 ? 'are' : 'is'} missing from environment variables."
+    def self.missing_keys(env = ENV)
+      REQUIRED_ENV_KEYS - env.keys
     end
 
-    # unlink tmpfile, but return result of upload_file
-    @bucket.object(path).upload_file(tmp.path).tap { |_| tmp.unlink }
+    def self.missing_keys?
+      !missing_keys.empty?
+    end
   end
 
-  # assembles, normalizes, remembers a bucket path.
-  def bucket_path(folder: bucket_folder, filename: bucket_filename)
-    bucket_folder   = normalize_folder(folder)
-    bucket_filename = normalize_filename(filename)
+  Path = Struct.new(:folder, :filename) do
+    using StringSubstitute
 
-    (Pathname.new(bucket_folder) + Pathname(bucket_filename)).to_s
+    def bucket_path
+      formatted_filename = filename.substitute(/^\//, '')
+      formatted_folder   = folder.match?(/\/$/) ? folder : (folder + '/')
+
+      (Pathname.new(formatted_folder) + Pathname(formatted_filename)).to_s
+    end
+
+    def to_s
+      bucket_path
+    end
   end
 
-  private
+  # Wrapper client for S3 string data upload.
+  class Client
+    # @param bucket [String] What bucket name you want to upload to.
+    # @param path [String] (anything #to_s able) #...
+    def initialize(bucket:, path:)
+      raise "#{missing_keys.join(', ')} missing from environment variables." if S3::Config.missing_keys?
 
-  # TODO: rename normalize_* methods to something more explanatory
-  def normalize_folder(folder)
-    @bucket_folder = folder.match?(/\/$/) ? folder : (folder + '/')
-  end
+      @s3     = Aws::S3::Resource.new
+      @bucket = @s3.bucket(bucket)
+      @path   = path
+    end
 
-  def normalize_filename(filename)
-    @bucket_filename = filename.substitute(/^\//, '')
+    # @return Bool returns if string upload successful
+    def upload_string(string, path = @path)
+      tmp = Tempfile.new('S3_Upload_Tempfile')
+      tmp.write(string)
+      tmp.close # close(ing) the file commits the write
+
+      # unlink tmpfile, but return result of upload_file
+      @bucket.object(path.to_s).upload_file(tmp.path).tap { |_| tmp.unlink }
+    end
   end
 end
