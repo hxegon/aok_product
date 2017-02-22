@@ -47,13 +47,11 @@ module S3
 
     # @return Bool returns if string upload successful
     def upload_string(string, path = @path)
-      # TODO: More consice way to use Tempfile?
-      tmp = Tempfile.new('S3_Upload_Tempfile')
-      tmp.write(string)
-      tmp.close # close(ing) the file commits the write
-
-      # unlink tmpfile, but return result of upload_file
-      @bucket.object(path.to_s).upload_file(tmp.path).tap { |_| tmp.unlink }
+      Tempfile.create('S3_Upload_Tempfile') do |f|
+        f.write(string)
+        f.close
+        @bucket.object(path.to_s).upload_file(tmp.path)
+      end
     end
   end
 end
