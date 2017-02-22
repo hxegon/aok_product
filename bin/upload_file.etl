@@ -1,9 +1,11 @@
 # vi: ft=ruby
 
 require 'kiba'
-require_relative '../lib/csv_source.rb'
-require_relative '../lib/aok_extractor.rb'
-require_relative '../lib/s3_destination.rb'
+require_relative '../lib/csv_source'
+require_relative '../lib/aok_extractor'
+require_relative '../lib/remote_destination'
+require_relative '../lib/s3'
+
 
 def debug(&block)
   if ENV["KIBA_DEBUG_MODE"]
@@ -40,20 +42,17 @@ CSV_PATHS.each do |file| # Does specifying multiple sources like this even work?
 end
 
 transform do |row|
-  AOKExtractor.new.extract(row) # Hash -> [Hash]
-    .reduce(&:merge)            # [Hash] -> Hash
+  AOKExtractor.new.extract(row)
 end
 
 prod_only do
-  client                 = F2S3.new bucket: 'aokproduct'
   debug do
-    client.bucket_folder   = 'Test/'
-    client.bucket_filename = 'products.json'
+    path = S3::Path.new('Test/', 'products.json')
   end
   prod_only do
-    client.bucket_folder   = ENV['KIBA_BUCKET_FOLDER']
-    client.bucket_filename = ENV['KIBA_BUCKET_FILENAME']
+    path = S3::Path.new(ENV['KIBA_BUCKET_FOLDER'], ENV['KIBA_BUCKET_FILENAME'])
   end
+  client = S3::Client.new bucket: 'aokproduct', path: path
 
-  destination S3Destination, client
+  destination RemoteDestination, client
 end

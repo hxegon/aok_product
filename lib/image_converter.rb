@@ -1,44 +1,24 @@
-# refines a method, Enumerable#map_with_index
-# @see Enumerable#each_with_index
-module MapWithIndex
-  refine Array do # Would refine Enumerable, but you can only refine classes, not modules.
-    def map_with_index
-      index = 0 # acts as an index, works like a counter
-      map do |element|
-        (yield element, index).tap { |_| index += 1 }
-      end
-    end
-  end
-end
+require_relative 'string_substitute'
 
 # Reformat image fields from jensen csv hashes to strip flattening artifacts.
-# @see .call
-# @note nothing in this class does URL validation.
-class ImageConverter
-  using MapWithIndex
+# @note No url validation
+module ImageConverter
+  using StringSubstitute
 
   # @param urls [String]
   # @return [Hash]
-  def self.urls_to_image_hash(urls)
-    urls.map_with_index do |e, ind|
-      { 'title' => "Image #{ind + 1}", 'url' => e }
+  # renamed from: urls_to_image_hash
+  def self.clean_convert(urls)
+    convert(urls.map(&method(:clean)))
+  end
+
+  def self.convert(urls)
+    urls.each_with_index.map do |url, ind|
+      { 'title' => "Image #{ind + 1}", 'url' => url }
     end
   end
 
-  # alias to .convert
-  # @see convert
-  def self.call(row)
-    convert(row)
-  end
-
-  def self.to_proc
-    proc { |row| self.class.convert(row) }
-  end
-
-  # Converts a row # SHOULDN'T EXIST. Row field finding / extraction logic should be in extractor
-  # THIS IS ALSO DESTRUCTIVE. NEEDS TO BE REWRITTEN
-  def self.convert(raw_images_string)
-    urls_to_image_hash(raw_images_string.split('&&'))
-    # row.merge('images' => urls_to_image_hash(row['images'].split('&&')))
+  def self.clean(url)
+    URI.decode(url).substitute(/.ashx\s*\z/i, '.jpg')
   end
 end

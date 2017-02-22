@@ -1,100 +1,111 @@
-require_relative 'image_converter'
 require_relative 'extractor'
-require_relative 'string_normalize'
+require_relative 'image_converter'
 
+# NOTES:
+# Should NIL_FIELD_REGEXP, the attribute header detection logic, taxon
+# separator, image separator, and so on be moved to some module/class? Sort of
+# the "<s>domain</s>format logic".
+
+# TODO: Extract to separate file.
 module HashGrepFirst
   refine Hash do
+    # Grep through hash keys for a given regex, and return the val of the first
+    # matching key.
     def grep_first(pattern)
       self[keys.grep(pattern).first]
     end
   end
 end
 
-class AOKExtractor < Extractor
+module FlowlinkSteps
+  REQUIRED_STEPS = Set[
+                       :taxons,
+                       :images,
+                       :properties,
+                       :brand,
+                       :price,
+                       :cost,
+                       :name,
+                       :description,
+                       :sku,
+                       :upc,
+                       :shipping_category,
+                       :id,
+                       :available_on
+  ]
+end
+
+class AOKExtractor < AbstractExtractor
   using HashGrepFirst
+  include FlowlinkSteps # Defines DEFAULT_STEPS
 
-  def taxons(row)
-    { 'taxons' =>
-      row.keys.grep(/taxon/i).map do |k|
-        row[k].split('&&')                                     # Split taxon strings
-          .map { |taxon_string| taxon_string.split('//') } # Split to taxon chain
-      end.flatten(1)                                           # turn [ [ [taxon chain] ] ] to [ [taxon chain] ]
-    }
+  DEFAULT_IMAGE = 'https://i.imgur.com/BAbXpMz.jpg'.freeze
+  NIL_FIELD_REGEXP = /\A\s*x?\s*\z/i
+
+  add_steps(REQUIRED_STEPS)
+
+  define_step(:taxons) do |row|
+    row.keys.grep(/taxon/i).map do |taxon_key|
+      row[taxon_key].split('&&')                         # Split taxon strings
+        .map { |taxon_string| taxon_string.split('//') } # Split to taxon chain
+    end.flatten(1)                                       # turn [ [ [taxon chain] ] ] to [ [taxon chain] ]
   end
 
-  def images(row)
-    raw_images = row.grep_first(/images/i)
-    images     = ImageConverter.convert(raw_images || 'https://i.imgur.com/BAbXpMz.jpg')
-    images.each do |image|
-      image.each do |(k, v)|
-        image[k] = URI.decode(v).normalize(/.ashx\s*\z/i, '.jpg') if k == 'url'
-      end
-    end
-    { 'images' => images } # TMP: Give cheeky 404 image if raw_images is nil
+  define_step(:properties) do |row|
+    row.select { |header, _| header[0] == '@' }     # find cells with attribute headers
+       .reject { |_, val| val =~ NIL_FIELD_REGEXP } # check is only x and or whitespace
+       .map { |(k, v)| [k.sub(/@/, ''), v] }        # remove attr identifier char: '@'
+       .map { |hash_arr| Hash[*hash_arr] }          # convert Hash map output (Array of Arrays) to Array of Hashes
+       .reduce(&:merge) || {}                       # merge Array of Hashes into single h
   end
 
-  def properties(row)
-    { 'properties' =>
-      row.select { |(header, _)| header[0] == '@' } # find cells with attribute headers
-        .reject { |_, val| val =~ /\A\s*x?\s*\z/i } # check is only x and or whitespace
-        .map { |(k, v)| [k.sub(/@/, ''), v] }       # remove attr identifier char: '@'
-        .map { |hash_arr| Hash[*hash_arr] }         # convert Hash map output (Array of Arrays) to Array of Hashes
-        .reduce(&:merge) || {}                      # merge Array of Hashes into single hash
-    }
+  define_step(:brand) do |row|
+    row.grep_first(/brand/i)
   end
 
-  def brand(row)
-    { 'brand' => row.grep_first(/brand/i) }
+  define_step(:price) do |row|
+    Float(row.grep_first(/price/i))
   end
 
-  def price(row)
-    # Because this is something that should be:
-    # a) Completely unambiguous
-    # b) Clear and visible as much as possible
-    # I'm going to have this raise NotImplementedError, to force the caller to implement it
-    # in a more visible place
-    { 'price' => Float(row.grep_first(/price/i)) }
+  define_step(:cost) do |_|
+    0.0
   end
 
-  def cost(row)
-    # Because this is something that should be:
-    # a) Completely unambiguous
-    # b) Clear and visible as much as possible
-    # I'm going to have this raise NotImplementedError, to force the caller to implement it
-    # in a more visible place
-    { 'cost' => 0.00 }
+  define_step(:name) do |row|
+    row.grep_first(/name/i)
   end
 
-  def name(row)
-    { 'name' => row.grep_first(/name/i) }
+  define_step(:description) do |row|
+    row.grep_first(/description/i) || ''
   end
 
-  def description(row)
-    { 'description' => row.grep_first(/description/i) || '' }
+  define_step(:sku) do |row|
+    row.grep_first(/sku/i)
   end
 
-  def sku(row)
-    { 'sku' => row.grep_first(/sku/i) }
-  end
-
-  def upc(row)
+  define_step(:upc) do |row|
     # Check this expression @ sku
-    { 'upc' => row.grep_first(/upc\s*(code)?\s*$/i) }
+    row.grep_first(/upc\s*(code)?\s*$/i)
   end
 
-  def shipping_category(row)
-    { 'shipping_category' => row.grep_first(/shipping category/i) }
+  define_step(:shipping_category) do |row|
+    row.grep_first(/shipping category/i)
+  end
+
+  define_step(:id) do |row|
+    row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s
+  end
+
+  define_step(:available_on) do |_|
+    Date.today.iso8601
+  end
+
+  define_step(:images) do |row|
+    raw_images = row.grep_first(/images/i)&.split('&&')
+    ImageConverter.clean_convert(raw_images || DEFAULT_IMAGE)
   end
 
   # Not defined, as specified by the readme
-  # def options(row)
+  # define_step(:options) do |row|
   # end
-
-  def id(row)
-    { 'id' => row.grep_first(/sku/i).to_s + row.grep_first(/brand/i).to_s }
-  end
-
-  def available_on(row)
-    { 'available_on' => Date.today.iso8601 }
-  end
 end
