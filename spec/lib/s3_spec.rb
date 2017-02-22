@@ -1,9 +1,9 @@
 require_relative '../../lib/s3'
 
-RSpec.describe S3::Config do
+RSpec.describe S3 do
   context '.missing_keys' do
     it 'to not be empty when there are no keys in env' do
-      expect(S3::Config.missing_keys(Hash.new)).to_not be_empty
+      expect(S3.missing_keys(Hash.new)).to_not be_empty
     end
   end
 end

@@ -4,16 +4,15 @@ require_relative 'string_substitute'
 # TODO: update documentation
 
 module S3
-  module Config 
-    REQUIRED_ENV_KEYS = %w[AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION].freeze
+  REQUIRED_ENV_KEYS = %w(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION).freeze
 
-    def self.missing_keys(env = ENV)
-      REQUIRED_ENV_KEYS - env.keys
-    end
+  def self.missing_keys(env = ENV)
+    REQUIRED_ENV_KEYS - env.keys
+  end
 
-    def self.missing_keys?
-      !missing_keys.empty?
-    end
+  # are there missing keys required by s3 client?
+  def self.missing_keys?(env = ENV)
+    !missing_keys(env).empty?
   end
 
   Path = Struct.new(:folder, :filename) do
@@ -36,7 +35,7 @@ module S3
     # @param bucket [String] What bucket name you want to upload to.
     # @param path [String] (anything #to_s able) #...
     def initialize(bucket:, path:)
-      raise "#{missing_keys.join(', ')} missing from environment variables." if S3::Config.missing_keys?
+      raise "#{missing_keys.join(', ')} missing from environment variables." if missing_keys?
 
       @s3     = Aws::S3::Resource.new
       @bucket = @s3.bucket(bucket)
