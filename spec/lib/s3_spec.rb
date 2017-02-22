@@ -1,4 +1,4 @@
-require_relative '../../lib/f2s3'
+require_relative '../../lib/s3'
 
 RSpec.describe S3::Config do
   context '.missing_keys' do

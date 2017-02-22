@@ -4,6 +4,7 @@ require 'kiba'
 require_relative '../lib/csv_source'
 require_relative '../lib/aok_extractor'
 require_relative '../lib/remote_destination'
+require_relative '../lib/s3'
 
 
 def debug(&block)

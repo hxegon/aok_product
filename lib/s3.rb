@@ -2,7 +2,6 @@ require 'aws-sdk'
 require_relative 'string_substitute'
 
 # TODO: update documentation
-# TODO: rename file
 
 module S3
   module Config 
