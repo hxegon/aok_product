@@ -25,7 +25,7 @@ Bug me if I haven't linked this yet, but I have to finish writing the yard doc c
 | brand | Brand | Husqvarna | |
 | price | Price | 12.99 | How much the customer pays for the item |
 | cost | Cost | 10.53 | |
-| name | The listing title | "460 Rancher" | |
+| name | The listing title | 460 Rancher | |
 | description | Longform item description | An excellent chainsaw that you totally shouldn't use to cut roots <etc> | |
 | sku | SKU | | |
 | upc | UPC | | |
