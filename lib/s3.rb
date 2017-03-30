@@ -50,7 +50,7 @@ module S3
       Tempfile.create('S3_Upload_Tempfile') do |f|
         f.write(string)
         f.close
-        @bucket.object(path.to_s).upload_file(tmp.path)
+        @bucket.object(path.to_s).upload_file(f.path)
       end
     end
   end
