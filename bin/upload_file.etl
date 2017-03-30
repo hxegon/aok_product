@@ -6,6 +6,9 @@ require_relative '../lib/aok_extractor'
 require_relative '../lib/remote_destination'
 require_relative '../lib/s3'
 
+require 'dotenv'
+Dotenv.load
+
 
 def debug(&block)
   if ENV["KIBA_DEBUG_MODE"]
@@ -49,9 +52,7 @@ prod_only do
   debug do
     path = S3::Path.new('Test/', 'products.json')
   end
-  prod_only do
-    path = S3::Path.new(ENV['KIBA_BUCKET_FOLDER'], ENV['KIBA_BUCKET_FILENAME'])
-  end
+  path ||= S3::Path.new(ENV['KIBA_BUCKET_FOLDER'], ENV['KIBA_BUCKET_FILENAME'])
   client = S3::Client.new bucket: 'aokproduct', path: path
 
   destination RemoteDestination, client
