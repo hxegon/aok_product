@@ -9,7 +9,7 @@ module ImageConverter
   # @return [Hash]
   # renamed from: urls_to_image_hash
   def self.clean_convert(urls)
-    convert(urls.map(&method(:clean)))
+    convert(Array(urls).map(&method(:clean)))
   end
 
   def self.convert(urls)
