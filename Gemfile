@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
-# ruby '~> 2.2.5'
-ruby '~> 2.4' # because String#match?
+ruby '~> 2.4' # for String#match?
 
 gem 'kiba'
 gem 'aws-sdk'
