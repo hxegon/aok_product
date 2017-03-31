@@ -72,7 +72,11 @@ class AOKExtractor < AbstractExtractor
   end
 
   define_step(:name) do |row|
-    row.grep_first(/name/i)
+    brand    = row.grep_first(/brand/i) # could potentially do this just calling #brand
+    raw_name = row.grep_first(/name/i)
+    
+    # Prepend brand name if it isn't already in name
+    raw_name.match?(/#{brand}/i) ? raw_name : [brand, raw_name].join(' ')
   end
 
   define_step(:description) do |row|
@@ -101,7 +105,7 @@ class AOKExtractor < AbstractExtractor
   end
 
   define_step(:images) do |row|
-    raw_images = row.grep_first(/images/i)&.split('&&')
+    raw_images = row.grep_first(/images/i)&.split('&&').take(2) # limit 2 product pictures
     ImageConverter.clean_convert(raw_images || DEFAULT_IMAGE)
   end
 
