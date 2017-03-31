@@ -38,7 +38,7 @@ module S3
     # @param bucket [String] What bucket name you want to upload to.
     # @param path [String] (anything #to_s able) #...
     def initialize(bucket:, path:)
-      raise "#{missing_keys.join(', ')} missing from environment variables." if missing_keys?
+      # raise "#{missing_keys.join(', ')} missing from environment variables." if missing_keys?
 
       @s3     = Aws::S3::Resource.new
       @bucket = @s3.bucket(bucket)
